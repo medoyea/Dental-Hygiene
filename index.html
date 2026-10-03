@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#f7f4ff" />
+  <meta name="description" content="Friendly, doctor-supported answers to your everyday dental hygiene questions." />
+  <title>websitename — معلومات لصحة أسنانك</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#home" aria-label="websitename"><span>websitename</span></a>
+    <nav class="nav-links" aria-label="Main navigation"><a href="#answers">Find an answer</a><a href="#journal">The journal</a><a href="#about">About us</a></nav>
+    <a class="top-cta" href="#answers">Let’s get you answers</a>
+    <button class="language-toggle" id="languageToggle" type="button" aria-label="Switch language to English">English</button>
+    <button class="menu-toggle" aria-label="فتح القائمة" aria-expanded="false"></button>
+  </header>
+
+  <main id="home">
+    <section class="hero" id="answers">
+      <div class="hero-orbit orbit-one"></div><div class="hero-orbit orbit-two"></div>
+      <div class="hero-content">
+        <h1>Good oral health<br />starts with <span>good answers.</span></h1>
+        <p class="hero-copy">A friendly place for the questions you’ve always had about your smile. Thoughtfully guided by dental professionals at BUE.</p>
+        <div class="search-wrap" id="searchWrap">
+          <span class="search-icon" aria-hidden="true"></span>
+          <input id="faqSearch" type="search" placeholder="Try “sensitive teeth” or “flossing”…" autocomplete="off" aria-label="Search dental questions" aria-expanded="false" aria-controls="faqResults" />
+          <div class="search-results" id="faqResults" role="listbox" aria-label="Suggested questions"></div>
+        </div>
+        <div class="search-hint"><span class="sparkle"></span> Not sure where to start? Pick a question below.</div>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <div class="art-halo"></div><div class="art-card art-card-back"></div>
+        <div class="smile-card"><div class="card-topline"><span class="mini-brand">websitename</span><span class="card-sun"></span></div><div class="smile-illustration"><img class="hero-face" src="images/hero.png" alt="" /></div><div class="card-caption">A healthy smile<br /><b>looks good on you.</b></div></div>
+        <div class="float-note note-one"><span></span> Care that feels<br />like a conversation</div>
+        <div class="float-note note-two"><span class="note-dot"></span> Reviewed with care</div>
+        <span class="art-flower flower-one"></span><span class="art-flower flower-two"></span>
+      </div>
+    </section>
+
+    <section class="popular section-shell" id="popular">
+      <div class="section-heading"><div><div class="eyebrow soft-eyebrow">YOUR QUESTIONS, ANSWERED</div><h2>What’s on your mind?</h2><p>Real-life questions, gentle answers. Choose one to chat with ZOY.</p></div><span class="heading-doodle" aria-hidden="true"></span></div>
+      <div class="question-grid" id="questionGrid"></div>
+      <div class="other-question"><div class="other-icon" aria-hidden="true"></div><div class="other-copy"><strong>Something else on your mind?</strong><span>Tell us what you’re wondering about.</span></div><span class="coming-soon">COMING SOON</span><button class="other-disabled" disabled aria-label="Other questions coming soon"></button></div>
+      <div class="trust-line">Made with care alongside dental professionals at <strong>BUE</strong></div>
+    </section>
+
+    <section class="chat-section" id="chatSection" aria-live="polite" hidden>
+      <div class="chat-panel">
+        <div class="chat-header"><button id="backToQuestions" class="back-button" aria-label="Back to questions">Back</button><div class="zoy-avatar">z</div><div class="chat-person"><strong>ZOY</strong><span><i></i> Your dental care guide</span></div><span class="chat-header-tag">A FRIENDLY GUIDE</span><button class="close-chat" id="closeChat" aria-label="Close chat">Close</button></div>
+        <div class="chat-body" id="chatBody"></div>
+        <div class="chat-compose" id="chatCompose"><div class="compose-label">PICK A QUESTION TO GET STARTED</div><div class="quick-replies" id="quickReplies"></div></div>
+        <div class="chat-footer">Friendly information, supported by dental professionals. For personal advice, please speak with your dentist.</div>
+      </div>
+    </section>
+
+    <section class="journal section-shell" id="journal">
+      <div class="journal-heading"><div><div class="eyebrow soft-eyebrow">WEBSITENAME JOURNAL</div><h2>Little reads for<br />brighter smiles.</h2></div><a href="#journal" class="all-articles">All articles</a></div>
+      <div class="blog-grid" id="blogGrid"></div>
+      <div class="editorial-note"><p>Good advice comes from people who care.<br /><b>Every article is created with dental professionals at BUE.</b></p></div>
+    </section>
+
+    <section class="about-section" id="about"><div class="section-shell about-inner"><div class="about-top"><div><div class="eyebrow">A SMILE IS A TEAM EFFORT</div><h2>Meet the people<br />behind the <span>care.</span></h2></div><p>We’re a team of BUE students working alongside dental professionals to make oral health information feel a little more human — and a lot easier to find.</p></div><div class="contributors" id="contributors"></div><div class="about-foot"><span>Made with care and a lot of curiosity.</span><span>THE BUE DENTAL HYGIENE PROJECT · 2026</span></div></div></section>
+  </main>
+  <footer class="footer"><a class="brand footer-brand" href="#home"><span>websitename</span></a><span>A softer place to start caring for your smile.</span><a href="#home">Back to top</a></footer>
+  <div class="toast" id="toast" role="status"></div>
+  <script src="script.js"></script>
+</body>
+</html>
