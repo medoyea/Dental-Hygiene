@@ -38,12 +38,17 @@ const chatSection=document.querySelector('#chatSection');
 const chatBody=document.querySelector('#chatBody');
 const quickReplies=document.querySelector('#quickReplies');
 let activeFaq=null;
+let placeholderTimer=null;
+let placeholderIndex=0;
+let currentPlaceholder='';
+function placeholderSuggestions(){return currentLang==='ar'?['كيف أخفف حساسية الأسنان؟','ما الطريقة الصحيحة لاستخدام الخيط؟','كم مرة أفرّش أسناني؟','لماذا تنزف اللثة؟']:['What causes tooth sensitivity?','How should I floss?','How often should I brush?','Why do gums bleed?']}
+function startPlaceholderRotation(){window.clearTimeout(placeholderTimer);if(search.value||document.activeElement===search)return;const suggestions=placeholderSuggestions();placeholderIndex%=suggestions.length;currentPlaceholder=suggestions[placeholderIndex];let position=0;search.placeholder='';const typeNext=()=>{if(search.value||document.activeElement===search)return;position++;search.placeholder=currentPlaceholder.slice(0,position);if(position<currentPlaceholder.length)placeholderTimer=window.setTimeout(typeNext,65);else placeholderTimer=window.setTimeout(eraseNext,3000)};const eraseNext=()=>{if(search.value||document.activeElement===search)return;position--;search.placeholder=currentPlaceholder.slice(0,position);if(position>0)placeholderTimer=window.setTimeout(eraseNext,35);else{placeholderIndex=(placeholderIndex+1)%suggestions.length;placeholderTimer=window.setTimeout(startPlaceholderRotation,250)}};typeNext()}
 
 function renderQuestions(){questionGrid.innerHTML=faqs.map(f=>`<button class="question-card" data-faq="${f.id}"><span class="q-card-top"><span class="q-arrow" aria-hidden="true"></span></span><strong>${getFaqTitle(f)}</strong></button>`).join('')}
 function matches(q){const normalized=q.trim().toLowerCase();return normalized?faqs.filter(f=>(getFaqTitle(f)+' '+f.tags+' '+(faqAr[f.id]?.tags||'')).toLowerCase().includes(normalized)):faqs.slice(0,4)}
 function renderResults(){const found=matches(search.value);results.innerHTML=`<div class="result-label">${t('SUGGESTED QUESTIONS','أسئلة مقترحة')}</div>`+(found.length?found.map(f=>`<button class="result-item" role="option" data-faq="${f.id}">${getFaqTitle(f)}</button>`).join(''):`<div class="no-results">${t('No exact match yet. Try a different search, or browse a question below.','لم نجد سؤالًا مطابقًا. جرّب كلمات أخرى أو اختر أحد الأسئلة أدناه.')}</div>`);search.setAttribute('aria-expanded','true')}
 renderQuestions();
-search.addEventListener('focus',()=>{searchWrap.classList.add('open');renderResults()});search.addEventListener('input',renderResults);
+search.addEventListener('focus',()=>{window.clearTimeout(placeholderTimer);if(!search.value)search.placeholder=currentPlaceholder||placeholderSuggestions()[placeholderIndex%placeholderSuggestions().length];searchWrap.classList.add('open');renderResults()});search.addEventListener('input',renderResults);search.addEventListener('blur',()=>{if(!search.value)startPlaceholderRotation()});
 document.addEventListener('click',e=>{if(!searchWrap.contains(e.target)){searchWrap.classList.remove('open');search.setAttribute('aria-expanded','false')}const button=e.target.closest('[data-faq]');if(button)openChat(button.dataset.faq)});
 function renderReplies(){quickReplies.innerHTML=getReplies(activeFaq).map((r,i)=>`<button class="quick-reply" data-reply="${i}">${r[0]}</button>`).join('')}
 const zoyMessageAvatar='<img class="message-avatar zoy-message-photo" src="images/ZOY.png" alt="ZOY" />';
@@ -68,7 +73,7 @@ set('.hero h1',ar?'صحة فمك تبدأ<br /><span>بـإجابات واضحة
 set('.hero-copy',t('A friendly place for the questions you’ve always had about your smile. Thoughtfully guided by dental professionals at BUE.','مساحة ودودة لإجابات أسئلتك عن ابتسامتك، بإرشاد أطباء ومتخصصين في طب الأسنان بالجامعة البريطانية في مصر.'));
 document.querySelector('meta[name="description"]').content=t('Friendly, doctor-supported answers to your everyday dental hygiene questions.','إجابات ودودة عن أسئلتك اليومية حول صحة الأسنان، بإشراف أطباء ومتخصصين.');
 set('.card-caption',ar?'ابتسامة صحية<br /><b>تليق بك.</b>':'A healthy smile<br /><b>looks good on you.</b>');set('.note-one',ar?'رعاية تبدأ<br />بحوار ودود':'Care that feels<br />like a conversation');set('.note-two',t('Reviewed with care','معلومات موثوقة بعناية'));
-search.placeholder=t('Try “sensitive teeth” or “flossing”…','جرّب «حساسية الأسنان» أو «خيط الأسنان»…');search.setAttribute('aria-label',t('Search dental questions','ابحث في أسئلة صحة الأسنان'));
+search.dir=ar?'rtl':'ltr';search.setAttribute('aria-label',t('Search dental questions','ابحث في أسئلة صحة الأسنان'));if(!search.value){const examples=placeholderSuggestions();currentPlaceholder=examples[placeholderIndex%examples.length];search.placeholder=currentPlaceholder;if(document.activeElement!==search)startPlaceholderRotation()}
 set('.search-hint',t('Not sure where to start? Pick a question below.','لا تعرف من أين تبدأ؟ اختر سؤالًا أدناه.'));
 set('.section-heading h2',t('What’s on your mind?','ما الذي يشغل بالك؟'));
 set('.other-copy',`<strong>${t('Something else on your mind?','هل لديك سؤال آخر؟')}</strong><span>${t('Tell us what you’re wondering about.','أخبرنا بما تود معرفته.')}</span>`);set('.coming-soon',t('COMING SOON','قريبًا'));document.querySelector('.other-disabled').setAttribute('aria-label',t('Other questions coming soon','أسئلة أخرى — قريبًا'));
