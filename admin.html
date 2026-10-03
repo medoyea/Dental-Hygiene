@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#f7f4ff" />
+  <title>Admin · websitename</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=Noto+Sans+Arabic:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body class="admin-page">
+  <header class="admin-header">
+    <a class="brand" href="index.html"><span>websitename</span></a>
+    <div class="admin-header-actions"><span class="admin-status" data-en="CONTENT WORKSPACE" data-ar="مساحة إدارة المحتوى">مساحة إدارة المحتوى</span><button class="language-toggle" id="adminLanguage" type="button">English</button><a class="admin-site-link" href="index.html" data-en="View website" data-ar="عرض الموقع">عرض الموقع</a></div>
+  </header>
+  <main class="admin-main">
+    <section class="admin-intro">
+      <div class="eyebrow" data-en="WEBsitename CONTENT STUDIO" data-ar="استوديو محتوى WEBSITENAME">استوديو محتوى WEBSITENAME</div>
+      <h1 data-en="A friendly place to share what you know." data-ar="مساحة سهلة لمشاركة المعرفة.">مساحة سهلة لمشاركة المعرفة.</h1>
+      <p data-en="Add a question and its ready-made ZOY answer, or publish a doctor’s blog. New entries appear on the website right away." data-ar="أضف سؤالًا وإجابة زوي الجاهزة، أو انشر مقالًا لطبيب. ستظهر الإضافات على الموقع فورًا.">أضف سؤالًا وإجابة زوي الجاهزة، أو انشر مقالًا لطبيب. ستظهر الإضافات على الموقع فورًا.</p>
+    </section>
+
+    <div class="admin-layout">
+      <section class="editor-card">
+        <div class="editor-tabs" role="tablist"><button class="editor-tab active" type="button" role="tab" aria-selected="true" aria-controls="faqForm" data-panel="faqPanel" data-en="Add FAQ" data-ar="إضافة سؤال شائع">إضافة سؤال شائع</button><button class="editor-tab" type="button" role="tab" aria-selected="false" aria-controls="blogForm" data-panel="blogPanel" data-en="Write a blog" data-ar="كتابة مقال">كتابة مقال</button></div>
+        <form id="faqForm" class="editor-form" data-panel-content="faqPanel">
+          <div class="form-heading"><div><h2 data-en="Add a FAQ" data-ar="إضافة سؤال شائع">إضافة سؤال شائع</h2><p data-en="Write the question and one ready-made question-and-answer pair for ZOY." data-ar="اكتب السؤال وأضف سؤالًا جاهزًا وإجابته ليعرضهما زوي.">اكتب السؤال وأضف سؤالًا جاهزًا وإجابته ليعرضهما زوي.</p></div></div>
+          <div class="field-grid">
+            <label><span data-en="FAQ question · English" data-ar="السؤال الشائع · الإنجليزية">السؤال الشائع · الإنجليزية</span><input name="title" required maxlength="140" placeholder="Example: How often should I replace my toothbrush?" /></label>
+            <label><span data-en="FAQ question · Arabic" data-ar="السؤال الشائع · العربية">السؤال الشائع · العربية</span><input name="titleAr" required maxlength="140" dir="rtl" placeholder="مثال: كل متى أغيّر فرشاة أسناني؟" /></label>
+          </div>
+          <div class="field-grid">
+            <label><span data-en="Search keywords · English (optional)" data-ar="كلمات البحث · الإنجليزية (اختياري)">كلمات البحث · الإنجليزية (اختياري)</span><input name="tags" placeholder="teeth, brushing, toothbrush" /></label>
+            <label><span data-en="Search keywords · Arabic (optional)" data-ar="كلمات البحث · العربية (اختياري)">كلمات البحث · العربية (اختياري)</span><input name="tagsAr" dir="rtl" placeholder="الأسنان، التفريش، الفرشاة" /></label>
+          </div>
+          <div class="subsection-title" data-en="ZOY’s ready-made reply" data-ar="الرد الجاهز من زوي">الرد الجاهز من زوي</div>
+          <div class="field-grid">
+            <label><span data-en="Patient’s suggested message · English" data-ar="رسالة المريض المقترحة · الإنجليزية">رسالة المريض المقترحة · الإنجليزية</span><input name="prompt" required maxlength="140" placeholder="Example: How long should I brush?" /></label>
+            <label><span data-en="ZOY’s answer · English" data-ar="إجابة زوي · الإنجليزية">إجابة زوي · الإنجليزية</span><textarea name="answer" required rows="3" maxlength="1200" placeholder="Write a clear, friendly answer reviewed by a dental professional."></textarea></label>
+            <label><span data-en="Patient’s suggested message · Arabic" data-ar="رسالة المريض المقترحة · العربية">رسالة المريض المقترحة · العربية</span><input name="promptAr" required maxlength="140" dir="rtl" placeholder="مثال: كم من الوقت يجب أن أفرّش؟" /></label>
+            <label><span data-en="ZOY’s answer · Arabic" data-ar="إجابة زوي · العربية">إجابة زوي · العربية</span><textarea name="answerAr" required rows="3" maxlength="1200" dir="rtl" placeholder="اكتب إجابة واضحة وودودة يراجعها طبيب أسنان."></textarea></label>
+          </div>
+          <button class="submit-button" type="submit" data-en="Publish FAQ" data-ar="نشر السؤال">نشر السؤال</button>
+        </form>
+
+        <form id="blogForm" class="editor-form" data-panel-content="blogPanel" hidden>
+          <div class="form-heading"><div><h2 data-en="Write a doctor’s blog" data-ar="كتابة مقال لطبيب">كتابة مقال لطبيب</h2><p data-en="Add a bilingual title, summary, and full article. Readers can open the article from its card." data-ar="أضف عنوانًا وملخصًا ومقالًا كاملًا باللغتين. يمكن للقراء فتح المقال من بطاقته.">أضف عنوانًا وملخصًا ومقالًا كاملًا باللغتين. يمكن للقراء فتح المقال من بطاقته.</p></div></div>
+          <div class="field-grid">
+            <label><span data-en="Article title · English" data-ar="عنوان المقال · الإنجليزية">عنوان المقال · الإنجليزية</span><input name="title" required maxlength="140" /></label>
+            <label><span data-en="Article title · Arabic" data-ar="عنوان المقال · العربية">عنوان المقال · العربية</span><input name="titleAr" required maxlength="140" dir="rtl" /></label>
+            <label><span data-en="Doctor’s name · English" data-ar="اسم الطبيب · الإنجليزية">اسم الطبيب · الإنجليزية</span><input name="author" required maxlength="80" placeholder="Dr. Name" /></label>
+            <label><span data-en="Doctor’s name · Arabic" data-ar="اسم الطبيب · العربية">اسم الطبيب · العربية</span><input name="authorAr" required maxlength="80" dir="rtl" placeholder="د. الاسم" /></label>
+            <label><span data-en="Category · English" data-ar="التصنيف · الإنجليزية">التصنيف · الإنجليزية</span><input name="category" required maxlength="50" placeholder="Gum health" /></label>
+            <label><span data-en="Category · Arabic" data-ar="التصنيف · العربية">التصنيف · العربية</span><input name="categoryAr" required maxlength="50" dir="rtl" placeholder="صحة اللثة" /></label>
+            <label><span data-en="Short summary · English" data-ar="ملخص قصير · الإنجليزية">ملخص قصير · الإنجليزية</span><textarea name="desc" required rows="2" maxlength="240"></textarea></label>
+            <label><span data-en="Short summary · Arabic" data-ar="ملخص قصير · العربية">ملخص قصير · العربية</span><textarea name="descAr" required rows="2" maxlength="240" dir="rtl"></textarea></label>
+            <label><span data-en="Full article · English" data-ar="المقال كاملًا · الإنجليزية">المقال كاملًا · الإنجليزية</span><textarea name="body" required rows="7" maxlength="12000"></textarea></label>
+            <label><span data-en="Full article · Arabic" data-ar="المقال كاملًا · العربية">المقال كاملًا · العربية</span><textarea name="bodyAr" required rows="7" maxlength="12000" dir="rtl"></textarea></label>
+          </div>
+          <button class="submit-button" type="submit" data-en="Publish blog" data-ar="نشر المقال">نشر المقال</button>
+        </form>
+      </section>
+
+      <aside class="saved-card">
+        <div class="saved-heading"><div><div class="eyebrow" data-en="YOUR CONTENT" data-ar="محتواك">محتواك</div><h2 data-en="Saved here" data-ar="المحفوظ هنا">المحفوظ هنا</h2></div><button id="refreshList" class="refresh-button" type="button" data-en="Refresh" data-ar="تحديث">تحديث</button></div>
+        <p class="saved-description" data-en="Entries added from this browser appear below. Remove an entry with the delete button." data-ar="تظهر الإضافات المحفوظة من هذا المتصفح أدناه. استخدم زر الحذف لإزالة أي عنصر.">تظهر الإضافات المحفوظة من هذا المتصفح أدناه. استخدم زر الحذف لإزالة أي عنصر.</p>
+        <div class="saved-section"><h3><span data-en="FAQs" data-ar="الأسئلة الشائعة">الأسئلة الشائعة</span><span id="faqCount" class="count-pill">0</span></h3><div id="savedFaqs" class="saved-list"></div></div>
+        <div class="saved-section"><h3><span data-en="Blogs" data-ar="المقالات">المقالات</span><span id="blogCount" class="count-pill">0</span></h3><div id="savedBlogs" class="saved-list"></div></div>
+        <div id="adminNotice" class="admin-notice" role="status" aria-live="polite"></div>
+      </aside>
+    </div>
+    <p class="admin-footnote" data-en="Please have a BUE dental professional review health information before publishing it." data-ar="يرجى مراجعة المعلومات الصحية من قبل طبيب أسنان في الجامعة البريطانية قبل نشرها.">يرجى مراجعة المعلومات الصحية من قبل طبيب أسنان في الجامعة البريطانية قبل نشرها.</p>
+  </main>
+  <script src="admin.js"></script>
+</body>
+</html>

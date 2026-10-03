@@ -52,7 +52,7 @@
 
     <section class="chat-section" id="chatSection" aria-live="polite" hidden>
       <div class="chat-panel">
-        <div class="chat-header"><button id="backToQuestions" class="back-button" aria-label="Back to questions">Back</button><div class="zoy-avatar">z</div><div class="chat-person"><strong>ZOY</strong><span><i></i> Your dental care guide</span></div><span class="chat-header-tag">A FRIENDLY GUIDE</span><button class="close-chat" id="closeChat" aria-label="Close chat">Close</button></div>
+        <div class="chat-header"><button id="backToQuestions" class="back-button" aria-label="Back to questions">Back</button><img class="zoy-header-photo" src="images/ZOY.png" alt="ZOY" /><div class="chat-person"><strong>ZOY</strong></div><button class="close-chat" id="closeChat" aria-label="Close chat">Close</button></div>
         <div class="chat-body" id="chatBody"></div>
         <div class="chat-compose" id="chatCompose"><div class="compose-label">PICK A QUESTION TO GET STARTED</div><div class="quick-replies" id="quickReplies"></div></div>
         <div class="chat-footer">Friendly information, supported by dental professionals. For personal advice, please speak with your dentist.</div>
@@ -67,7 +67,9 @@
 
     <section class="about-section" id="about"><div class="section-shell about-inner"><div class="about-top"><div><div class="eyebrow">A SMILE IS A TEAM EFFORT</div><h2>Meet the people<br />behind the <span>care.</span></h2></div><p>We’re a team of BUE students working alongside dental professionals to make oral health information feel a little more human — and a lot easier to find.</p></div><div class="contributors" id="contributors"></div><div class="about-foot"><span>Made with care and a lot of curiosity.</span><span>THE BUE DENTAL HYGIENE PROJECT · 2026</span></div></div></section>
   </main>
-  <footer class="footer"><a class="brand footer-brand" href="#home"><span>websitename</span></a><span>A softer place to start caring for your smile.</span><a href="#home">Back to top</a></footer>
+  <footer class="footer"><a class="brand footer-brand" href="#home"><span>websitename</span></a><span>A softer place to start caring for your smile.</span><a href="#home">Back to top</a><button class="admin-access" id="adminAccess" type="button">Admin</button></footer>
+  <dialog class="article-dialog" id="articleDialog"><form method="dialog"><button class="dialog-close" aria-label="Close">Close</button></form><div class="eyebrow" id="articleMeta"></div><h2 id="articleTitle"></h2><p class="article-author" id="articleAuthor"></p><div class="article-content" id="articleContent"></div></dialog>
+  <dialog class="admin-gate-dialog" id="adminGate"><form id="adminGateForm"><h2 id="adminGateTitle">Admin access</h2><p id="adminGateDescription">Enter the admin access number.</p><label for="adminCode" id="adminCodeLabel">Access number</label><input id="adminCode" name="code" type="password" inputmode="numeric" pattern="[0-9]*" autocomplete="off" required /><p class="admin-gate-error" id="adminGateError" role="alert"></p><div class="admin-gate-actions"><button type="button" id="adminGateCancel">Cancel</button><button type="submit" class="admin-gate-submit">Continue</button></div></form></dialog>
   <div class="toast" id="toast" role="status"></div>
   <script src="script.js"></script>
 </body>
