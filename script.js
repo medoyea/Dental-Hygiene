@@ -13,9 +13,9 @@ const blogs=[
   {category:'SMILE NOTES',time:'6 MIN READ',title:'Myth or fact: your smile edition',desc:'A few common dental beliefs, gently unpacked with a professional perspective.',palette:'rose',art:'smile'}
 ];
 blogs.push(...JSON.parse(localStorage.getItem('websitename-blogs')||'[]'));
-const people=['Dr. Ziad Mahmoud','Dr. Omar Sameh','Dr. Yehia Tarek','Dr. Tarek Mohammed','Dr. Shreef Mohammed','Dr. Sara Mohammad','Dr. Nada Waleed','Dr. Nadine Ahmed','Dr. Ranim Elhusseiny','Dr. Najah Abdelfattah','Eng. Mohamed Ahmed'];
-const peopleAr=['د. زياد محمود','د. عمر سامح','د. يحيى طارق','د. طارق محمد','د. شريف محمد','د. سارة محمد','د. ندى وليد','د. نادين أحمد','د. رنيم الحسيني','د. نجاح عبد الفتاح','م. محمد أحمد'];
-const peoplePhotoFiles=[1,2,3,4,6,7,8,9,10,11,12];
+const people=['Dr. Ziad Mahmoud','Dr. Omar Sameh','Dr. Yehia Tarek','Dr. Tarek Mohammed','Dr. Shreef Mohammed','Dr. Ranim Elhusseiny','Dr. Sara Mohammad','Dr. Nada Waleed','Dr. Nadine Ahmed','Dr. Najah Abdelfattah','Eng. Mohamed Ahmed'];
+const peopleAr=['د. زياد محمود','د. عمر سامح','د. يحيى طارق','د. طارق محمد','د. شريف محمد','د. رنيم الحسيني','د. سارة محمد','د. ندى وليد','د. نادين أحمد','د. نجاح عبد الفتاح','م. محمد أحمد'];
+const peoplePhotoFiles=[1,2,3,4,6,10,7,8,9,11,12];
 const cofounders=[{name:'Prof. Dalia Ghalwash',nameAr:'أ.د. داليا غلاوش',photo:'0.png'},{name:'Dr. Youssef Yasser',nameAr:'د. يوسف ياسر',photo:'5.png'}];
 let currentLang='ar';
 const faqAr={
