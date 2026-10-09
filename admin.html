@@ -14,16 +14,39 @@
 <body class="admin-page">
   <header class="admin-header">
     <a class="brand" href="index.html"><span>websitename</span></a>
-    <div class="admin-header-actions"><span class="admin-status" data-en="CONTENT WORKSPACE" data-ar="مساحة إدارة المحتوى">مساحة إدارة المحتوى</span><button class="language-toggle" id="adminLanguage" type="button">English</button><a class="admin-site-link" href="index.html" data-en="View website" data-ar="عرض الموقع">عرض الموقع</a></div>
+    <div class="admin-header-actions"><span class="admin-status" data-en="CONTENT WORKSPACE" data-ar="مساحة إدارة المحتوى">مساحة إدارة المحتوى</span><button class="language-toggle" id="adminLanguage" type="button">English</button><button class="admin-site-link admin-signout" id="adminSignOut" type="button" hidden data-en="Sign out" data-ar="تسجيل الخروج">تسجيل الخروج</button><a class="admin-site-link" href="index.html" data-en="View website" data-ar="عرض الموقع">عرض الموقع</a></div>
   </header>
   <main class="admin-main">
-    <section class="admin-intro">
+    <section class="admin-login" id="adminLogin" hidden>
+      <div class="eyebrow" data-en="STAFF SIGN IN" data-ar="دخول الفريق">دخول الفريق</div>
+      <h1 data-en="Sign in to manage content." data-ar="سجّل الدخول لإدارة المحتوى.">سجّل الدخول لإدارة المحتوى.</h1>
+      <p data-en="Use the staff email and password created for you." data-ar="استخدم البريد الإلكتروني وكلمة المرور المخصّصين لك كعضو في الفريق.">استخدم البريد الإلكتروني وكلمة المرور المخصّصين لك كعضو في الفريق.</p>
+      <form id="adminLoginForm" class="admin-login-form">
+        <label for="adminEmail"><span data-en="Email" data-ar="البريد الإلكتروني">البريد الإلكتروني</span><input id="adminEmail" name="email" type="email" autocomplete="username" required /></label>
+        <label for="adminPassword"><span data-en="Password" data-ar="كلمة المرور">كلمة المرور</span><input id="adminPassword" name="password" type="password" autocomplete="current-password" required /></label>
+        <button class="submit-button" type="submit" data-en="Sign in" data-ar="تسجيل الدخول">تسجيل الدخول</button>
+        <button class="admin-forgot-password" id="adminForgotPassword" type="button" data-en="Forgot password?" data-ar="هل نسيت كلمة المرور؟">هل نسيت كلمة المرور؟</button>
+        <p id="adminLoginError" class="admin-login-error" role="alert"></p>
+      </form>
+    </section>
+    <section class="admin-login admin-password-reset" id="adminPasswordReset" hidden>
+      <div class="eyebrow" data-en="RESET PASSWORD" data-ar="إعادة تعيين كلمة المرور">إعادة تعيين كلمة المرور</div>
+      <h1 data-en="Choose a new password." data-ar="اختر كلمة مرور جديدة.">اختر كلمة مرور جديدة.</h1>
+      <p data-en="Use at least 8 characters, then sign in with your new password." data-ar="استخدم ٨ أحرف على الأقل، ثم سجّل الدخول بكلمة المرور الجديدة.">استخدم ٨ أحرف على الأقل، ثم سجّل الدخول بكلمة المرور الجديدة.</p>
+      <form id="adminPasswordResetForm" class="admin-login-form">
+        <label for="newAdminPassword"><span data-en="New password" data-ar="كلمة المرور الجديدة">كلمة المرور الجديدة</span><input id="newAdminPassword" name="password" type="password" autocomplete="new-password" minlength="8" required /></label>
+        <label for="confirmAdminPassword"><span data-en="Confirm new password" data-ar="تأكيد كلمة المرور الجديدة">تأكيد كلمة المرور الجديدة</span><input id="confirmAdminPassword" name="confirmPassword" type="password" autocomplete="new-password" minlength="8" required /></label>
+        <button class="submit-button" type="submit" data-en="Save new password" data-ar="حفظ كلمة المرور الجديدة">حفظ كلمة المرور الجديدة</button>
+        <p id="adminPasswordResetError" class="admin-login-error" role="alert"></p>
+      </form>
+    </section>
+    <section class="admin-intro" hidden>
       <div class="eyebrow" data-en="WEBsitename CONTENT STUDIO" data-ar="استوديو محتوى WEBSITENAME">استوديو محتوى WEBSITENAME</div>
       <h1 data-en="A friendly place to share what you know." data-ar="مساحة سهلة لمشاركة المعرفة.">مساحة سهلة لمشاركة المعرفة.</h1>
       <p data-en="Add a question and its ready-made ZOY answer, or publish a doctor’s blog. New entries appear on the website right away." data-ar="أضف سؤالًا وإجابة زوي الجاهزة، أو انشر مقالًا لطبيب. ستظهر الإضافات على الموقع فورًا.">أضف سؤالًا وإجابة زوي الجاهزة، أو انشر مقالًا لطبيب. ستظهر الإضافات على الموقع فورًا.</p>
     </section>
 
-    <div class="admin-layout">
+    <div class="admin-layout" hidden>
       <section class="editor-card">
         <div class="editor-tabs" role="tablist"><button class="editor-tab active" type="button" role="tab" aria-selected="true" aria-controls="faqForm" data-panel="faqPanel" data-en="Add FAQ" data-ar="إضافة سؤال شائع">إضافة سؤال شائع</button><button class="editor-tab" type="button" role="tab" aria-selected="false" aria-controls="blogForm" data-panel="blogPanel" data-en="Write a blog" data-ar="كتابة مقال">كتابة مقال</button></div>
         <form id="faqForm" class="editor-form" data-panel-content="faqPanel">
@@ -72,8 +95,8 @@
         <div id="adminNotice" class="admin-notice" role="status" aria-live="polite"></div>
       </aside>
     </div>
-    <p class="admin-footnote" data-en="Please have a BUE dental professional review health information before publishing it." data-ar="يرجى مراجعة المعلومات الصحية من قبل طبيب أسنان في الجامعة البريطانية قبل نشرها.">يرجى مراجعة المعلومات الصحية من قبل طبيب أسنان في الجامعة البريطانية قبل نشرها.</p>
+    <p class="admin-footnote" hidden data-en="Please have a BUE dental professional review health information before publishing it." data-ar="يرجى مراجعة المعلومات الصحية من قبل طبيب أسنان في الجامعة البريطانية قبل نشرها.">يرجى مراجعة المعلومات الصحية من قبل طبيب أسنان في الجامعة البريطانية قبل نشرها.</p>
   </main>
-  <script src="admin.js"></script>
+  <script type="module" src="/admin.js"></script>
 </body>
 </html>

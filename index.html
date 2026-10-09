@@ -71,6 +71,6 @@
   <dialog class="article-dialog" id="articleDialog"><form method="dialog"><button class="dialog-close" aria-label="Close">Close</button></form><div class="eyebrow" id="articleMeta"></div><h2 id="articleTitle"></h2><p class="article-author" id="articleAuthor"></p><div class="article-content" id="articleContent"></div></dialog>
   <dialog class="admin-gate-dialog" id="adminGate"><form id="adminGateForm"><h2 id="adminGateTitle">Admin access</h2><p id="adminGateDescription">Enter the admin access number.</p><label for="adminCode" id="adminCodeLabel">Access number</label><input id="adminCode" name="code" type="password" inputmode="numeric" pattern="[0-9]*" autocomplete="off" required /><p class="admin-gate-error" id="adminGateError" role="alert"></p><div class="admin-gate-actions"><button type="button" id="adminGateCancel">Cancel</button><button type="submit" class="admin-gate-submit">Continue</button></div></form></dialog>
   <div class="toast" id="toast" role="status"></div>
-  <script src="script.js"></script>
+  <script type="module" src="/script.js"></script>
 </body>
 </html>
