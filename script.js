@@ -16,7 +16,8 @@ const peoplePhotoFiles=[1,2,3,4,6,10,7,8,9,11,12,13];
 const webDeveloperIndex=people.indexOf('Eng. Mohamed Ahmed');
 const aiEngineerIndex=people.indexOf('Eng. Shady Mohamed');
 const cofounders=[{name:'Prof. Dalia Ghalwash',nameAr:'أ.د. داليا غلاوش',photo:'0.png'},{name:'Dr. Youssef Yasser',nameAr:'د. يوسف ياسر',photo:'5.png'}];
-let currentLang='ar';
+const savedLanguage=localStorage.getItem('siteLanguage');
+let currentLang=savedLanguage==='en'?'en':'ar';
 const blogAr=[{category:'العناية اليومية',time:'٥ دقائق',title:'عادات يومية بسيطة تصنع فرقًا كبيرًا',desc:'طريقة سهلة ولطيفة لبناء روتين تشكرك عليه ابتسامتك.'},{category:'صحة اللثة',time:'٤ دقائق',title:'لنتحدث عن صحة اللثة',desc:'ما الذي قد تخبرك به لثتك، وكيف تعتني بها أكثر.'},{category:'ملاحظات لابتسامتك',time:'٦ دقائق',title:'حقيقة أم خرافة؟ أسئلة عن ابتسامتك',desc:'نراجع بعض المعتقدات الشائعة مع منظور مهني.'}];
 const t=(en,ar)=>currentLang==='ar'?ar:en;
 const escapeHtml=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
@@ -89,5 +90,5 @@ set('.about-top .eyebrow',t('A SMILE IS A TEAM EFFORT',''));set('.about-top h2',
 set('.about-foot',`<span>${t('Made with care and a lot of curiosity.','صُنع بعناية وكثير من الشغف والفضول.')}</span><span>${t('THE BUE DENTAL HYGIENE PROJECT · 2026','مشروع صحة الأسنان بالجامعة البريطانية · ٢٠٢٦')}</span>`);
 set('.footer>span',t('A softer place to start caring for your smile.','مساحة ودودة لتبدأ العناية بابتسامتك.'));set('.footer>a:last-child',t('Back to top','العودة إلى الأعلى'));
 renderQuestions();renderBlogs();renderPeople();if(searchWrap.classList.contains('open'))renderResults();}
-document.querySelector('#languageToggle').addEventListener('click',()=>{currentLang=currentLang==='ar'?'en':'ar';applyLanguage()});document.querySelector('.nav-links').addEventListener('click',e=>{if(e.target.closest('a'))closeMobileMenu()});applyLanguage();
+document.querySelector('#languageToggle').addEventListener('click',()=>{currentLang=currentLang==='ar'?'en':'ar';localStorage.setItem('siteLanguage',currentLang);window.currentLanguage=currentLang;applyLanguage()});document.querySelector('.nav-links').addEventListener('click',e=>{if(e.target.closest('a'))closeMobileMenu()});window.currentLanguage=currentLang;applyLanguage();
 document.querySelector('#adminAccess').addEventListener('click',()=>{window.location.href='admin.html'});
