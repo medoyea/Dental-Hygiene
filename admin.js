@@ -19,6 +19,10 @@ const editorIntro=document.querySelector('.admin-intro');
 const workspace=document.querySelector('.admin-layout');
 const footnote=document.querySelector('.admin-footnote');
 const signOutButton=document.querySelector('#adminSignOut');
+const welcomeHeading=document.querySelector('#adminWelcome');
+
+function adminDisplayName(user){return user?.user_metadata?.display_name?.trim()||user?.user_metadata?.full_name?.trim()||user?.email?.split('@')[0]||''}
+function updateWelcome(){const name=adminDisplayName(signedInUser);welcomeHeading.textContent=language==='ar'?`مرحبًا بعودتك، ${name}`:`Welcome back ${name}`}
 
 function notify(message){notice.textContent=message;window.setTimeout(()=>{notice.textContent=''},4000)}
 function setSignedIn(user){
@@ -29,6 +33,7 @@ function setSignedIn(user){
   workspace.hidden=!signedInUser;
   footnote.hidden=!signedInUser;
   signOutButton.hidden=!signedInUser;
+  updateWelcome();
   if(signedInUser)renderSaved();
 }
 function renderList(selector,items,type){
@@ -64,7 +69,7 @@ document.querySelector('#blogForm').addEventListener('submit',async event=>{
 });
 document.querySelector('.saved-card').addEventListener('click',async event=>{const button=event.target.closest('.delete-item');if(!button||!signedInUser)return;const table=button.dataset.type==='faq'?'faqs':'blogs';const {error}=await supabase.from(table).delete().eq('id',button.dataset.id);if(error){console.error(error);notify(t('Entry could not be deleted.','تعذّر حذف المحتوى.'));return}await renderSaved();notify(t('Entry deleted.','تم حذف المحتوى.'))});
 document.querySelector('#refreshList').addEventListener('click',renderSaved);
-document.querySelector('#adminLanguage').addEventListener('click',()=>{language=language==='ar'?'en':'ar';localStorage.setItem('siteLanguage',language);window.currentLanguage=language;applyLanguage()});
+document.querySelector('#adminLanguage').addEventListener('click',()=>{language=language==='ar'?'en':'ar';localStorage.setItem('siteLanguage',language);window.currentLanguage=language;applyLanguage();updateWelcome()});
 document.querySelector('#adminForgotPassword').addEventListener('click',async()=>{loginError.textContent='';const email=document.querySelector('#adminEmail').value.trim();if(!email){loginError.textContent=t('Enter your account email first.','أدخل البريد الإلكتروني لحسابك أولًا.');document.querySelector('#adminEmail').focus();return}const button=document.querySelector('#adminForgotPassword');button.disabled=true;const {error}=await supabase.auth.resetPasswordForEmail(email,{redirectTo:`${window.location.origin}/admin.html`});button.disabled=false;if(error){console.error(error);loginError.textContent=t('Could not send the reset email. Check the Supabase redirect URL settings and try again.','تعذّر إرسال رسالة إعادة التعيين. تحقق من إعدادات روابط إعادة التوجيه في Supabase وحاول مجددًا.');return}loginError.textContent=t('If that account exists, a password reset link is on its way. Check your inbox.','إذا كان الحساب موجودًا، فستصلك رسالة إعادة تعيين. تحقق من بريدك.');});
 loginForm.addEventListener('submit',async event=>{event.preventDefault();loginError.textContent='';const data=formData(loginForm);const submit=loginForm.querySelector('[type="submit"]');submit.disabled=true;const {data:result,error}=await supabase.auth.signInWithPassword({email:data.email.trim(),password:data.password});submit.disabled=false;if(error){loginError.textContent=t('Sign-in failed. Check your email and password.','تعذّر تسجيل الدخول. تحقق من البريد الإلكتروني وكلمة المرور.');return}loginForm.reset();setSignedIn(result.user)});
 resetForm.addEventListener('submit',async event=>{event.preventDefault();resetError.textContent='';const data=formData(resetForm);if(data.password!==data.confirmPassword){resetError.textContent=t('The passwords do not match.','كلمتا المرور غير متطابقتين.');return}const submit=resetForm.querySelector('[type="submit"]');submit.disabled=true;const {error}=await supabase.auth.updateUser({password:data.password});submit.disabled=false;if(error){console.error(error);resetError.textContent=t('Could not update the password. The reset link may have expired; request a new one.','تعذّر تحديث كلمة المرور. ربما انتهت صلاحية الرابط؛ اطلب رابطًا جديدًا.');return}passwordRecoveryActive=false;resetForm.reset();await supabase.auth.signOut();setSignedIn(null);loginError.textContent=t('Password updated. Sign in with your new password.','تم تحديث كلمة المرور. سجّل الدخول بكلمة المرور الجديدة.');});
