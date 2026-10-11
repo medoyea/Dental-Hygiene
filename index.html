@@ -11,11 +11,12 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="directory.css" />
 </head>
 <body>
   <header class="topbar">
     <a class="brand" href="#home" aria-label="websitename"><span>websitename</span></a>
-    <nav class="nav-links" aria-label="Main navigation"><a href="#answers">Find an answer</a><a href="#journal">The journal</a><a href="#about">About us</a></nav>
+    <nav class="nav-links" aria-label="Main navigation"><a href="#answers">Find an answer</a><a href="#journal">The journal</a><a href="#dentists">Find a dentist</a><a href="#about">About us</a></nav>
     <a class="top-cta" href="#answers">Let’s get you answers</a>
     <button class="language-toggle" id="languageToggle" type="button" aria-label="Switch language to English">English</button>
     <button class="menu-toggle" aria-label="فتح القائمة" aria-expanded="false"></button>
@@ -63,6 +64,19 @@
       <div class="journal-heading"><div><div class="eyebrow soft-eyebrow">WEBSITENAME JOURNAL</div><h2>Little reads for<br />brighter smiles.</h2></div><a href="#journal" class="all-articles">All articles</a></div>
       <div class="blog-grid" id="blogGrid"></div>
       <div class="editorial-note"><p>Good advice comes from people who care.<br /><b>Every article is created with dental professionals at BUE.</b></p></div>
+    </section>
+
+    <section class="dentist-directory section-shell" id="dentists" aria-labelledby="dentistHeading">
+      <div class="directory-heading">
+        <div><div class="eyebrow" data-en="A DIRECTORY YOU CAN TRUST" data-ar="دليل لمساعدتك في الاختيار">دليل لمساعدتك في الاختيار</div><h2 id="dentistHeading" data-en="Find a dentist near you." data-ar="اعثر على طبيب أسنان قريب منك.">اعثر على طبيب أسنان قريب منك.</h2><p data-en="Browse practices reviewed by our team, or sort listings by distance using your location." data-ar="تصفّح العيادات التي يراجعها فريقنا، أو رتّب النتائج حسب المسافة باستخدام موقعك.">تصفّح العيادات التي يراجعها فريقنا، أو رتّب النتائج حسب المسافة باستخدام موقعك.</p></div>
+      </div>
+      <div class="nearby-finder" id="nearbyFinder">
+        <div class="finder-orbit orbit-wide" aria-hidden="true"><span class="orbit-dot"></span></div>
+        <div class="finder-orbit orbit-inner" aria-hidden="true"><span class="orbit-dot"></span></div>
+        <div class="finder-core"><button id="useDentistLocation" class="finder-button" type="button" aria-expanded="false" aria-controls="dentistResultsPanel"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M25 13.3c0 7-9 15.2-9 15.2S7 20.3 7 13.3a9 9 0 1 1 18 0Z" stroke="currentColor" stroke-width="2.2"/><circle cx="16" cy="13" r="3" stroke="currentColor" stroke-width="2.2"/></svg><span data-en="Find dentists near me" data-ar="اعثر على أطباء قريبين">اعثر على أطباء قريبين</span></button></div>
+      </div>
+      <div class="directory-controls"><label class="dentist-search-label" for="dentistSearch" data-en="Or search by dentist, clinic, or area" data-ar="أو ابحث باسم الطبيب أو العيادة أو المنطقة">أو ابحث باسم الطبيب أو العيادة أو المنطقة</label><div class="directory-search-row"><input id="dentistSearch" type="search" autocomplete="off" /></div></div>
+      <div class="directory-results" id="dentistResultsPanel" hidden><p id="dentistStatus" class="directory-status" role="status" aria-live="polite"></p><div class="dentist-grid" id="dentistGrid" aria-live="polite"></div></div>
     </section>
 
     <section class="about-section" id="about"><div class="section-shell about-inner"><div class="about-top"><div><div class="eyebrow">A SMILE IS A TEAM EFFORT</div><h2>Meet the people<br />behind the <span>care.</span></h2></div><p>We’re a team of BUE students working alongside dental professionals to make oral health information feel a little more human — and a lot easier to find.</p></div><div class="cofounders-heading" id="cofoundersHeading">CO-FOUNDERS</div><div class="cofounders-grid" id="cofounders"></div><div class="contributors" id="contributors"></div><div class="about-foot"><span>Made with care and a lot of curiosity.</span><span>THE BUE DENTAL HYGIENE PROJECT · 2026</span></div></div></section>

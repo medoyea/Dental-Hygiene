@@ -56,6 +56,73 @@ renderBlogs();
 document.querySelector('#blogGrid').addEventListener('click',e=>{const button=e.target.closest('.blog-read');if(!button)return;const article=blogs.find(b=>b.id===button.dataset.blogId);if(article){const ar=currentLang==='ar';document.querySelector('#articleMeta').textContent=ar?(article.categoryAr||article.category):article.category;document.querySelector('#articleTitle').textContent=ar?(article.titleAr||article.title):article.title;document.querySelector('#articleAuthor').textContent=ar?`بقلم ${article.authorAr||article.author}`:`By ${article.author}`;document.querySelector('#articleContent').textContent=ar?(article.bodyAr||article.body):article.body;document.querySelector('#articleDialog').showModal();return}const toast=document.querySelector('#toast');toast.textContent=currentLang==='ar'?'مقالات الأطباء قريبًا.':'Doctor articles are coming soon.';toast.classList.add('show');window.setTimeout(()=>toast.classList.remove('show'),2200)});
 function renderPeople(){document.querySelector('#cofounders').innerHTML=cofounders.map(person=>`<div class="cofounder"><img class="cofounder-photo" src="${contributorPhotoUrl(person.photo)}" alt="${currentLang==='ar'?person.nameAr:person.name}" loading="lazy" /><strong>${currentLang==='ar'?person.nameAr:person.name}</strong></div>`).join('');document.querySelector('#contributors').innerHTML=people.map((person,i)=>`<div class="contributor"><img class="contrib-photo" src="${contributorPhotoUrl(`${peoplePhotoFiles[i]}.png`)}" alt="${currentLang==='ar'?peopleAr[i]:person}" loading="lazy" /><div><strong>${currentLang==='ar'?peopleAr[i]:person}</strong><span>${i===webDeveloperIndex?(currentLang==='ar'?'مطور ويب':'Web developer'):i===aiEngineerIndex?(currentLang==='ar'?'مهندس ذكاء اصطناعي':'AI engineer'):(currentLang==='ar'?'مساهم في الفريق':'Team contributor')}</span></div></div>`).join('')}
 renderPeople();
+const dentists=[];
+const dentistSearch=document.querySelector('#dentistSearch');
+const dentistGrid=document.querySelector('#dentistGrid');
+const dentistStatus=document.querySelector('#dentistStatus');
+const locationButton=document.querySelector('#useDentistLocation');
+const dentistFinder=document.querySelector('#nearbyFinder');
+const dentistResultsPanel=document.querySelector('#dentistResultsPanel');
+let dentistDirectoryState='loading';
+let dentistLocation=null;
+let dentistStatusKey='';
+let dentistResultsOpen=false;
+let dentistSearching=false;
+const dentistStatusText={
+  loading:['Loading reviewed listings…','جارٍ تحميل العيادات المدرجة…'],
+  error:['We couldn’t load the directory. Please try again later.','تعذّر تحميل الدليل. يرجى المحاولة لاحقًا.'],
+  empty:['No dentists have been listed yet. Please check back soon.','لم تتم إضافة عيادات بعد. تفقّد الدليل قريبًا.'],
+  noMatch:['No listings match that search. Try a different dentist or area.','لا توجد نتائج مطابقة. جرّب البحث عن طبيب أو منطقة أخرى.'],
+  locating:['Getting your location…','جارٍ تحديد موقعك…'],
+  sorted:['Showing nearby listings first. Your location is used only for this search.','تظهر العيادات الأقرب أولًا. يُستخدم موقعك لهذا البحث فقط.'],
+  denied:['Location access was unavailable. You can still search by area.','تعذّر الوصول إلى موقعك. يمكنك البحث باسم المنطقة.'],
+  unsupported:['Location search isn’t available here. You can still search by area.','البحث بالموقع غير متاح هنا. يمكنك البحث باسم المنطقة.']
+};
+const distanceKm=(lat1,lon1,lat2,lon2)=>{const radians=value=>value*Math.PI/180;const dLat=radians(lat2-lat1),dLon=radians(lon2-lon1);const a=Math.sin(dLat/2)**2+Math.cos(radians(lat1))*Math.cos(radians(lat2))*Math.sin(dLon/2)**2;return 6371*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a))};
+const safeExternalUrl=value=>{try{const url=new URL(value);return ['https:','http:'].includes(url.protocol)?url.href:''}catch{return ''}};
+function updateDentistStatus(){const messages=dentistStatusText[dentistStatusKey];dentistStatus.textContent=messages?messages[currentLang==='ar'?1:0]:'';const buttonLabel=locationButton.querySelector('span');buttonLabel.textContent=dentistSearching?t('Finding nearby dentists…','جارٍ البحث عن أطباء قريبين…'):t('Find dentists near me','اعثر على أطباء قريبين');locationButton.setAttribute('aria-busy',String(dentistSearching))}
+function revealDentistResults(scrollToList=false){const firstReveal=!dentistResultsOpen;dentistResultsOpen=true;dentistResultsPanel.hidden=false;locationButton.setAttribute('aria-expanded','true');dentistFinder.classList.add('is-open');if(firstReveal){dentistResultsPanel.classList.remove('is-revealing');void dentistResultsPanel.offsetWidth;dentistResultsPanel.classList.add('is-revealing');window.setTimeout(()=>dentistResultsPanel.classList.remove('is-revealing'),850)}if(scrollToList)window.setTimeout(()=>dentistResultsPanel.scrollIntoView({behavior:'smooth',block:'start'}),180)}
+function renderDentists(){
+  dentistResultsPanel.hidden=!dentistResultsOpen;
+  updateDentistStatus();
+  if(dentistDirectoryState==='loading'||dentistDirectoryState==='error'){dentistGrid.innerHTML=`<div class="directory-empty">${t(dentistDirectoryState==='loading'?'Loading reviewed listings…':'We couldn’t load the directory. Please try again later.',dentistDirectoryState==='loading'?'جارٍ تحميل العيادات المدرجة…':'تعذّر تحميل الدليل. يرجى المحاولة لاحقًا.')}</div>`;return}
+  const query=dentistSearch.value.trim().toLocaleLowerCase();
+  const visible=dentists.map(row=>{const validCoordinates=row.latitude!==null&&row.longitude!==null&&row.latitude!==''&&row.longitude!=='';const lat=Number(row.latitude),lon=Number(row.longitude);return {...row,_distance:dentistLocation&&validCoordinates&&Number.isFinite(lat)&&Number.isFinite(lon)?distanceKm(dentistLocation.latitude,dentistLocation.longitude,lat,lon):null}}).filter(row=>!query||[row.clinic_name_en,row.clinic_name_ar,row.dentist_name_en,row.dentist_name_ar,row.area_en,row.area_ar,row.address_en,row.address_ar,row.description_en,row.description_ar,...(row.services_en||[]),...(row.services_ar||[])].filter(Boolean).join(' ').toLocaleLowerCase().includes(query));
+  if(dentistLocation)visible.sort((a,b)=>(a._distance??Infinity)-(b._distance??Infinity));
+  if(!visible.length){dentistGrid.innerHTML=`<div class="directory-empty">${t(query?'No listings match that search. Try a different dentist or area.':'No dentists have been listed yet. Please check back soon.',query?'لا توجد نتائج مطابقة. جرّب البحث عن طبيب أو منطقة أخرى.':'لم تتم إضافة عيادات بعد. تفقّد الدليل قريبًا.')}</div>`;return}
+  const ar=currentLang==='ar';
+  dentistGrid.innerHTML=visible.map((row,index)=>{
+    const clinic=ar?(row.clinic_name_ar||row.clinic_name_en):(row.clinic_name_en||row.clinic_name_ar);
+    const dentist=ar?(row.dentist_name_ar||row.dentist_name_en):(row.dentist_name_en||row.dentist_name_ar);
+    const area=ar?(row.area_ar||row.area_en):(row.area_en||row.area_ar);
+    const address=ar?(row.address_ar||row.address_en):(row.address_en||row.address_ar);
+    const description=ar?(row.description_ar||row.description_en):(row.description_en||row.description_ar);
+    const services=ar?(row.services_ar||row.services_en||[]):(row.services_en||row.services_ar||[]);
+    const hasCoordinates=row.latitude!==null&&row.longitude!==null&&row.latitude!==''&&row.longitude!==''&&Number.isFinite(Number(row.latitude))&&Number.isFinite(Number(row.longitude));
+    const destination=hasCoordinates?`${row.latitude},${row.longitude}`:encodeURIComponent(`${clinic} ${address||''} ${area||''}`.trim());
+    const directions=safeExternalUrl(row.maps_url)||`https://www.google.com/maps/dir/?api=1&destination=${destination}`;
+    const website=safeExternalUrl(row.website_url);
+    const phone=String(row.phone||'').replace(/[^+\d]/g,'');
+    const badges=`${row.is_sponsored?`<span class="dentist-badge sponsored">${t('Sponsored','إعلان ممول')}</span>`:''}${row.is_test?`<span class="dentist-badge demo">${t('Test listing — not a real clinic','بيانات اختبار — ليست عيادة حقيقية')}</span>`:''}`;
+    const distance=row._distance===null?'':`<span class="dentist-distance">${new Intl.NumberFormat(ar?'ar-EG':'en-US',{maximumFractionDigits:1}).format(row._distance)} ${t('km away','كم')}</span>`;
+    const verified=row.verified_at?`<p class="dentist-verified">${t('Last reviewed','آخر مراجعة')}: ${new Date(row.verified_at).toLocaleDateString(ar?'ar-EG':'en-US')}</p>`:'';
+    const actions=`<a class="dentist-action" href="${escapeHtml(directions)}" target="_blank" rel="noopener noreferrer">${t('Open in Maps','افتح على الخرائط')}</a>${phone?`<a class="dentist-action" href="tel:${escapeHtml(phone)}">${t('Call','اتصال')}</a>`:''}${website?`<a class="dentist-action" href="${escapeHtml(website)}" target="_blank" rel="noopener noreferrer">${t('Website','الموقع الإلكتروني')}</a>`:''}`;
+    return `<article class="dentist-card" style="animation-delay:${Math.min(index,8)*45}ms"><div class="dentist-card-top"><div class="dentist-badges">${badges}</div>${distance}</div><h3>${escapeHtml(clinic)}</h3>${dentist?`<p class="dentist-provider">${t('Dentist','طبيب الأسنان')}: ${escapeHtml(dentist)}</p>`:''}<p class="dentist-address">${escapeHtml([address,area].filter(Boolean).join(' · '))}</p>${description?`<p class="dentist-description">${escapeHtml(description)}</p>`:''}${services.length?`<div class="dentist-services">${services.map(service=>`<span class="dentist-service">${escapeHtml(service)}</span>`).join('')}</div>`:''}${verified}<div class="dentist-actions">${actions}</div></article>`
+  }).join('');
+}
+dentistSearch.addEventListener('input',()=>{if(dentistSearch.value.trim())revealDentistResults();renderDentists()});
+locationButton.addEventListener('click',()=>{
+  if(!navigator.geolocation){dentistStatusKey='unsupported';revealDentistResults(true);renderDentists();return}
+  dentistLocation=null;dentistStatusKey='locating';dentistSearching=true;dentistResultsOpen=false;dentistResultsPanel.hidden=true;locationButton.setAttribute('aria-expanded','false');dentistFinder.classList.remove('is-open');dentistFinder.classList.add('is-searching');locationButton.disabled=true;renderDentists();
+  const finishSearch=(statusKey,position=null)=>{window.setTimeout(()=>{dentistLocation=position?{latitude:position.coords.latitude,longitude:position.coords.longitude}:null;dentistStatusKey=statusKey;dentistSearching=false;locationButton.disabled=false;dentistFinder.classList.remove('is-searching');revealDentistResults(true);renderDentists()},480)};
+  navigator.geolocation.getCurrentPosition(position=>finishSearch('sorted',position),error=>{console.info('Location was not available:',error.message);finishSearch('denied')},{enableHighAccuracy:false,timeout:10000,maximumAge:60000});
+});
+async function loadDentistDirectory(){
+  const {data,error}=await supabase.from('dentists').select('id,clinic_name_en,clinic_name_ar,dentist_name_en,dentist_name_ar,area_en,area_ar,address_en,address_ar,description_en,description_ar,phone,website_url,maps_url,latitude,longitude,services_en,services_ar,is_sponsored,is_test,status,verified_at').eq('status','published').order('clinic_name_en',{ascending:true});
+  if(error){console.error('Could not load dentist listings:',error);dentistDirectoryState='error';renderDentists();return}
+  dentists.push(...(data||[]));dentistDirectoryState='ready';renderDentists();
+}
+loadDentistDirectory();
 async function loadPublishedContent(){
   const [faqResult,blogResult]=await Promise.all([
     supabase.from('faqs').select('id,question_en,question_ar,keywords_en,keywords_ar,replies,status').eq('status','published').order('created_at',{ascending:true}),
@@ -72,7 +139,7 @@ const menu=document.querySelector('.menu-toggle');const nav=document.querySelect
 
 function applyLanguage(){const ar=currentLang==='ar';document.documentElement.lang=ar?'ar':'en';document.documentElement.dir=ar?'rtl':'ltr';document.title=ar?'websitename — معلومات لصحة أسنانك':'websitename — Dental care, made clearer';document.querySelector('#languageToggle').textContent=ar?'English':'العربية';document.querySelector('#languageToggle').setAttribute('aria-label',ar?'Switch language to English':'تغيير اللغة إلى العربية');document.querySelector('.menu-toggle').setAttribute('aria-label',ar?'فتح القائمة':'Open menu');document.querySelector('#backToQuestions').textContent=t('Back','رجوع');document.querySelector('#backToQuestions').setAttribute('aria-label',t('Back to questions','العودة للأسئلة'));document.querySelector('#closeChat').textContent=t('Close','إغلاق');document.querySelector('#adminGateTitle').textContent=t('Admin access','دخول الإدارة');document.querySelector('#adminGateDescription').textContent=t('Enter the admin access number.','أدخل رقم دخول الإدارة.');document.querySelector('#adminCodeLabel').textContent=t('Access number','رقم الدخول');document.querySelector('#adminGateCancel').textContent=t('Cancel','إلغاء');document.querySelector('.admin-gate-submit').textContent=t('Continue','متابعة');
 const set=(s,value)=>{const el=document.querySelector(s);if(el)el.innerHTML=value};
-set('.nav-links',`<a href="#answers">${t('Find an answer','ابحث عن إجابة')}</a><a href="#journal">${t('The journal','المدونة')}</a><a href="#about">${t('About us','من نحن')}</a>`);
+set('.nav-links',`<a href="#answers">${t('Find an answer','ابحث عن إجابة')}</a><a href="#journal">${t('The journal','المدونة')}</a><a href="#dentists">${t('Find a dentist','ابحث عن طبيب أسنان')}</a><a href="#about">${t('About us','من نحن')}</a>`);
 set('.top-cta',t('Let’s get you answers','لنعثر لك على إجابة'));
 set('.hero h1',ar?'صحة فمك تبدأ<br /><span>بـإجابات واضحة.</span>':'Good oral health<br />starts with <span>good answers.</span>');
 set('.hero-copy',t('A friendly place for the questions you’ve always had about your smile. Thoughtfully guided by dental professionals at BUE.','مساحة ودودة لإجابات أسئلتك عن ابتسامتك، بإرشاد أطباء ومتخصصين في طب الأسنان بالجامعة البريطانية في مصر.'));
@@ -85,10 +152,11 @@ set('.other-copy',`<strong>${t('Something else on your mind?','هل لديك س�
 set('.trust-line',`${t('Made with care alongside dental professionals at','بالتعاون مع أطباء ومتخصصين في طب الأسنان بـ')} <strong>BUE</strong>`);
 set('.compose-label',t('PICK A QUESTION TO GET STARTED','اختر سؤالًا لنبدأ'));set('.chat-footer',t('Friendly information, supported by dental professionals. For personal advice, please speak with your dentist.','معلومات إرشادية بالتعاون مع متخصصين. للحصول على نصيحة شخصية، يرجى استشارة طبيب الأسنان.'));
 set('.journal-heading .soft-eyebrow',t('WEBSITENAME JOURNAL','مدونة WEBSITENAME'));set('.journal h2',ar?'مقالات قصيرة<br />لابتسامة أجمل.':'Little reads for<br />brighter smiles.');set('.all-articles',t('All articles','كل المقالات'));
+set('.directory-heading .eyebrow',t('A DIRECTORY YOU CAN TRUST','دليل لمساعدتك في الاختيار'));set('#dentistHeading',t('Find a dentist near you.','اعثر على طبيب أسنان قريب منك.'));set('.directory-heading p',t('Browse practices reviewed by our team, or sort listings by distance using your location.','تصفّح العيادات التي يراجعها فريقنا، أو رتّب النتائج حسب المسافة باستخدام موقعك.'));set('.dentist-search-label',t('Or search by dentist, clinic, or area','أو ابحث باسم الطبيب أو العيادة أو المنطقة'));dentistSearch.placeholder=t('Dentist, clinic, or area','طبيب أسنان أو عيادة أو منطقة');dentistSearch.dir=ar?'rtl':'ltr';locationButton.querySelector('span').textContent=dentistSearching?t('Finding nearby dentists…','جارٍ البحث عن أطباء قريبين…'):t('Find dentists near me','اعثر على أطباء قريبين');
 set('.editorial-note p',`${t('Good advice comes from people who care.','النصيحة الجيدة تأتي ممن يهتمون بصحتك.')}<br /><b>${t('Every article is created with dental professionals at BUE.','كل مقال يُعد بالتعاون مع أطباء ومتخصصين في طب الأسنان بالجامعة البريطانية في مصر.')}</b>`);
 set('.about-top .eyebrow',t('A SMILE IS A TEAM EFFORT',''));set('.about-top h2',ar?'تعرّف على فريق<br />صنع هذه <span>المبادرة.</span>':'Meet the people<br />behind the <span>care.</span>');set('.about-top p',t('We’re a team of BUE students working alongside dental professionals to make oral health information feel a little more human — and a lot easier to find.','نحن فريق من طلاب الجامعة البريطانية في مصر، نعمل مع أطباء ومتخصصين لنجعل معلومات صحة الفم أقرب إليك وأسهل في الوصول.'));document.querySelector('#cofoundersHeading').textContent=t('CO-FOUNDERS','المؤسسان');
 set('.about-foot',`<span>${t('Made with care and a lot of curiosity.','صُنع بعناية وكثير من الشغف والفضول.')}</span><span>${t('THE BUE DENTAL HYGIENE PROJECT · 2026','مشروع صحة الأسنان بالجامعة البريطانية · ٢٠٢٦')}</span>`);
 set('.footer>span',t('A softer place to start caring for your smile.','مساحة ودودة لتبدأ العناية بابتسامتك.'));set('.footer>a:last-child',t('Back to top','العودة إلى الأعلى'));
-renderQuestions();renderBlogs();renderPeople();if(searchWrap.classList.contains('open'))renderResults();}
+renderQuestions();renderBlogs();renderPeople();renderDentists();if(searchWrap.classList.contains('open'))renderResults();}
 document.querySelector('#languageToggle').addEventListener('click',()=>{currentLang=currentLang==='ar'?'en':'ar';localStorage.setItem('siteLanguage',currentLang);window.currentLanguage=currentLang;applyLanguage()});document.querySelector('.nav-links').addEventListener('click',e=>{if(e.target.closest('a'))closeMobileMenu()});window.currentLanguage=currentLang;applyLanguage();
 document.querySelector('#adminAccess').addEventListener('click',()=>{window.location.href='admin.html'});

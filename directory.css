@@ -1,0 +1,70 @@
+.dentist-directory{padding:82px 0 92px;scroll-margin-top:90px}
+.directory-heading{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:28px}
+.directory-heading h2{font:700 clamp(30px,4vw,42px)/1.2 var(--serif);letter-spacing:-1.6px;color:var(--ink);margin:13px 0 8px}
+.directory-heading p{max-width:680px;color:var(--muted);font-size:15px;line-height:1.75;margin:0}
+.directory-controls{max-width:770px;margin:0 0 25px;padding:19px;border:1px solid var(--line);border-radius:20px;background:#fff;box-shadow:0 12px 34px #43385108}
+.dentist-search-label{display:block;margin-bottom:9px;color:#645c70;font-size:14px;font-weight:700}
+.directory-search-row{display:flex;gap:10px}
+.directory-search-row input{min-width:0;flex:1;border:1px solid #e8e3ed;border-radius:13px;padding:13px 15px;background:#fdfcff;color:var(--ink);font:500 15px var(--sans);outline:none;transition:border .2s,box-shadow .2s}
+.directory-search-row input:focus{border-color:#bea8d1;box-shadow:0 0 0 3px #f1eafa}
+.location-button{flex:none;border:0;border-radius:13px;background:#8061ba;color:#fff;padding:0 17px;font-size:14px;font-weight:700;cursor:pointer;transition:transform .2s,background .2s}
+.location-button:hover{background:#6f50aa;transform:translateY(-1px)}
+.location-button:disabled{opacity:.65;cursor:wait;transform:none}
+.directory-status{min-height:20px;margin:9px 2px 0;color:#7b7186;font-size:13px;line-height:1.5}
+.directory-status:empty{display:none}
+.dentist-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}
+.dentist-card{min-width:0;border:1px solid var(--line);border-radius:20px;background:#fff;padding:20px;box-shadow:0 10px 28px #43385108;animation:fadeUp .35s both;transition:transform .22s,box-shadow .22s}
+.dentist-card:hover{transform:translateY(-3px);box-shadow:0 16px 32px #43385111}
+.dentist-card-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:13px}
+.dentist-badges{display:flex;align-items:center;flex-wrap:wrap;gap:6px}
+.dentist-badge{display:inline-flex;align-items:center;border-radius:999px;padding:5px 9px;background:#f0eafa;color:#74569b;font-size:11px;font-weight:700}
+.dentist-badge.sponsored{background:#f9e9ef;color:#925c73}
+.dentist-badge.demo{background:#fff2d9;color:#765a23}
+.dentist-distance{flex:none;color:#786b88;font-size:12px;font-weight:700}
+.dentist-card h3{font:700 20px/1.35 var(--serif);color:#3e3749;margin:0 0 5px;overflow-wrap:anywhere}
+.dentist-provider{font-size:14px;color:#766b82;margin:0 0 11px}
+.dentist-address{font-size:14px;line-height:1.65;color:#696273;margin:0 0 8px}
+.dentist-description{font-size:14px;line-height:1.7;color:#8a8292;margin:0 0 13px}
+.dentist-services{display:flex;flex-wrap:wrap;gap:6px;margin:13px 0}
+.dentist-service{border-radius:999px;background:#f7f4fa;padding:6px 9px;color:#766a83;font-size:12px}
+.dentist-verified{font-size:12px;color:#91889b;margin:12px 0 0}
+.dentist-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:15px}
+.dentist-action{display:inline-flex;justify-content:center;align-items:center;min-height:40px;border:1px solid #e8e0ef;border-radius:12px;padding:8px 12px;color:#71588c;font-size:13px;font-weight:700;transition:background .2s,border .2s}
+.dentist-action:hover{background:#f5effa;border-color:#d9c9e9}
+.directory-empty{grid-column:1/-1;padding:26px;border:1px dashed #ddd2e7;border-radius:18px;background:#fff;color:#766d82;text-align:center;font-size:15px;line-height:1.7}
+@media(max-width:850px){.dentist-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.dentist-directory{padding:65px 0 72px}}
+@media(max-width:560px){.directory-heading h2{font-size:31px;letter-spacing:-1px}.directory-heading p{font-size:14px}.directory-controls{padding:15px}.directory-search-row{flex-direction:column}.directory-search-row input{width:100%}.location-button{min-height:45px}.dentist-grid{grid-template-columns:1fr;gap:11px}.dentist-card{padding:17px}}
+@media(max-width:390px){.dentist-card-top{align-items:flex-start;flex-direction:column}.dentist-distance{align-self:flex-start}}
+.nav-links.mobile-open a:nth-child(4){background:#eee7f8;animation-delay:.19s}
+.nav-links.mobile-open a:nth-child(4){animation:mobile-enter-right .27s ease .37s both}
+.nav-links.mobile-closing a:nth-child(4){background:#eee7f8;animation:mobile-item-right .27s ease 0s both}
+.nearby-finder{height:335px;position:relative;display:grid;place-items:center;isolation:isolate;margin:-5px auto 11px}
+.finder-orbit{position:absolute;left:50%;top:50%;border-radius:50%;transform:translate(-50%,-50%);pointer-events:none}
+.orbit-wide{width:270px;height:270px;border:1px solid #e8ddf2;border-left-color:#d7c2e8;border-top-color:transparent;animation:finder-spin 12s linear infinite}
+.orbit-inner{width:220px;height:220px;border:1px dashed #e8d5e2;border-right-color:#d8b1c7;animation:finder-spin-reverse 17s linear infinite}
+.orbit-dot{position:absolute;width:11px;height:11px;border-radius:50%;background:#d8a7c0;box-shadow:0 0 0 5px #f8eaf1;top:21px;left:25px}
+.orbit-inner .orbit-dot{width:8px;height:8px;background:#9c82bd;box-shadow:0 0 0 4px #f1ebf8;top:auto;left:auto;bottom:15px;right:28px}
+.finder-core{position:absolute;inset:0;z-index:1;display:grid;place-items:center;pointer-events:none}
+.finder-button{pointer-events:auto;width:164px;height:164px;border:1px solid #e5d8f0;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;padding:19px;background:radial-gradient(circle at 32% 23%,#fff 0,#faf7ff 53%,#f7eaf1 100%);box-shadow:0 15px 40px #7160801a,inset 0 0 0 7px #fff9;color:#59476d;cursor:pointer;transition:transform .28s,box-shadow .28s,border-color .28s}
+.finder-button:hover{transform:scale(1.045);border-color:#d5bddf;box-shadow:0 20px 45px #7160802a,inset 0 0 0 7px #fff9}
+.finder-button:focus-visible{outline:3px solid #987bc2;outline-offset:5px}
+.finder-button:disabled{cursor:wait}
+.finder-button svg{width:31px;height:31px;color:#9d78bb}
+.finder-button span{max-width:113px;font-size:14px;line-height:1.35;font-weight:800;text-align:center}
+.nearby-finder.is-searching .orbit-wide{animation-duration:1s;border-color:#c7a8dc;border-top-color:transparent}
+.nearby-finder.is-searching .orbit-inner{animation-duration:.72s;border-color:#ddb6ca;border-left-color:transparent}
+.nearby-finder.is-searching .finder-button{animation:finder-pulse .8s ease-in-out infinite alternate}
+.nearby-finder.is-open .orbit-wide{animation-duration:7s}
+.nearby-finder.is-open .orbit-inner{animation-duration:10s}
+.directory-results[hidden]{display:none}
+.directory-results.is-revealing{animation:finder-results-in .72s cubic-bezier(.16,1,.3,1) both}
+.directory-controls{margin-inline:auto}
+.directory-results{max-width:100%;margin:0 auto}
+.directory-results .directory-status{max-width:770px;margin:0 auto 12px}
+@keyframes finder-spin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+@keyframes finder-spin-reverse{to{transform:translate(-50%,-50%) rotate(-360deg)}}
+@keyframes finder-pulse{from{transform:scale(.97)}to{transform:scale(1.035)}}
+@keyframes finder-results-in{from{opacity:0;transform:translateY(30px) scale(.97);clip-path:inset(0 0 100% 0 round 24px)}to{opacity:1;transform:translateY(0) scale(1);clip-path:inset(0 0 0 0 round 24px)}}
+@media(max-width:560px){.nearby-finder{height:310px}.orbit-wide{width:250px;height:250px}.orbit-inner{width:202px;height:202px}.finder-button{width:150px;height:150px}.finder-button span{font-size:13px}.directory-results.is-revealing{animation-duration:.58s}}
+@media(prefers-reduced-motion:reduce){.orbit-wide,.orbit-inner,.nearby-finder.is-searching .finder-button{animation:none}.directory-results.is-revealing{animation:none}}
+@media(prefers-reduced-motion:reduce){.dentist-card{animation:none;transition:none}}
