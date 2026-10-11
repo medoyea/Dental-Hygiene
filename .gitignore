@@ -5,3 +5,4 @@ dist/
 .dev.vars
 .dev.vars.*
 supabase/functions/.env
+supabase/.temp/

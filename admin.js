@@ -6,6 +6,7 @@ let signedInUser=null;
 let passwordRecoveryActive=false;
 let savedFaqs=[];
 let savedBlogs=[];
+let savedDentists=[];
 const formData=form=>Object.fromEntries(new FormData(form).entries());
 const notice=document.querySelector('#adminNotice');
 const t=(en,ar)=>language==='ar'?ar:en;
@@ -42,15 +43,18 @@ function renderList(selector,items,type){
   items.forEach(item=>{const row=document.createElement('div');row.className='saved-item';const title=document.createElement('span');title.className='saved-item-title';title.textContent=language==='ar'?(item.title_ar||item.title_en):(item.title_en||item.title_ar);const remove=document.createElement('button');remove.type='button';remove.className='delete-item';remove.dataset.type=type;remove.dataset.id=item.id;remove.textContent=t('Delete','حذف');row.append(title,remove);root.append(row)})
 }
 async function renderSaved(){
-  const [faqResult,blogResult]=await Promise.all([
+  const [faqResult,blogResult,dentistResult]=await Promise.all([
     supabase.from('faqs').select('id,question_en,question_ar,status').order('created_at',{ascending:false}),
-    supabase.from('blogs').select('id,title_en,title_ar,status').order('created_at',{ascending:false})
+    supabase.from('blogs').select('id,title_en,title_ar,status').order('created_at',{ascending:false}),
+    supabase.from('dentists').select('id,clinic_name_en,clinic_name_ar,status').order('created_at',{ascending:false})
   ]);
-  if(faqResult.error||blogResult.error){notify(t('Could not load content. Check your Supabase tables and policies.','تعذّر تحميل المحتوى. تحقق من جداول Supabase وسياسات الوصول.'));console.error(faqResult.error||blogResult.error);return}
-  savedFaqs=faqResult.data;savedBlogs=blogResult.data;
+  if(faqResult.error||blogResult.error||dentistResult.error){notify(t('Could not load content. Check that the FAQs, blogs, and dentists tables and policies are configured.','تعذّر تحميل المحتوى. تحقق من إعداد جداول الأسئلة والمقالات وأطباء الأسنان وسياسات الوصول.'));console.error(faqResult.error||blogResult.error||dentistResult.error);return}
+  savedFaqs=faqResult.data;savedBlogs=blogResult.data;savedDentists=dentistResult.data;
   document.querySelector('#faqCount').textContent=savedFaqs.length;document.querySelector('#blogCount').textContent=savedBlogs.length;
+  document.querySelector('#dentistCount').textContent=savedDentists.length;
   renderList('#savedFaqs',savedFaqs.map(row=>({...row,title_en:row.question_en,title_ar:row.question_ar})),'faq');
   renderList('#savedBlogs',savedBlogs,'blog');
+  renderList('#savedDentists',savedDentists.map(row=>({...row,title_en:row.clinic_name_en,title_ar:row.clinic_name_ar})),'dentist');
 }
 function openEditorPanel(name){const tab=[...document.querySelectorAll('.editor-tab')].find(item=>item.dataset.panel===name);const panel=document.querySelector(`[data-panel-content="${name}"]`);if(!tab||!panel)return;document.querySelectorAll('.editor-tab').forEach(item=>{const active=item===tab;item.classList.toggle('active',active);item.setAttribute('aria-selected',String(active))});document.querySelectorAll('[data-panel-content]').forEach(item=>{item.hidden=item!==panel});panel.querySelector('input,textarea')?.focus({preventScroll:true})}
 document.querySelectorAll('.editor-tab').forEach(tab=>tab.addEventListener('click',event=>{event.preventDefault();openEditorPanel(tab.dataset.panel)}));
@@ -67,7 +71,39 @@ document.querySelector('#blogForm').addEventListener('submit',async event=>{
   button.disabled=false;if(error){console.error(error);notify(t('Blog could not be saved. Check your table columns and RLS policies.','تعذّر حفظ المقال. تحقق من أعمدة الجدول وسياسات الوصول.'));return}
   form.reset();await renderSaved();notify(t('Blog published to the shared website.','نُشر المقال على الموقع المشترك.'));
 });
-document.querySelector('.saved-card').addEventListener('click',async event=>{const button=event.target.closest('.delete-item');if(!button||!signedInUser)return;const table=button.dataset.type==='faq'?'faqs':'blogs';const {error}=await supabase.from(table).delete().eq('id',button.dataset.id);if(error){console.error(error);notify(t('Entry could not be deleted.','تعذّر حذف المحتوى.'));return}await renderSaved();notify(t('Entry deleted.','تم حذف المحتوى.'))});
+const dentistForm=document.querySelector('#dentistForm');
+const mapCoordinatesFromUrl=value=>{
+  try{
+    const url=new URL(value);
+    const patterns=[/@(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/,/!3d(-?\d+(?:\.\d+)?)!4d(-?\d+(?:\.\d+)?)/];
+    for(const pattern of patterns){const match=url.href.match(pattern);if(match)return {latitude:Number(match[1]),longitude:Number(match[2])}}
+    for(const key of ['q','query','destination','ll']){const value=url.searchParams.get(key);const match=value?.match(/^\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*$/);if(match)return {latitude:Number(match[1]),longitude:Number(match[2])}}
+  }catch{}
+  return null;
+};
+dentistForm.elements.mapsUrl.addEventListener('input',()=>{
+  const point=mapCoordinatesFromUrl(dentistForm.elements.mapsUrl.value.trim());
+  if(!point)return;
+  const valid=Number.isFinite(point.latitude)&&Number.isFinite(point.longitude)&&Math.abs(point.latitude)<=90&&Math.abs(point.longitude)<=180;
+  if(valid){dentistForm.elements.latitude.value=point.latitude;dentistForm.elements.longitude.value=point.longitude;document.querySelector('#mapCoordinateNote').textContent=t('Coordinates detected and filled from the map link.','تم العثور على الإحداثيات وتعبئتها من رابط الخريطة.')}
+});
+dentistForm.addEventListener('submit',async event=>{
+  event.preventDefault();if(!signedInUser)return;
+  const form=event.currentTarget,data=formData(form),button=form.querySelector('[type="submit"]');button.disabled=true;
+  const services=value=>value.split(/[\n,،]/).map(item=>item.trim()).filter(Boolean);
+  const clinic=data.clinicNameEn.trim();
+  const baseSlug=clinic.toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,70)||'clinic';
+  const slug=`${baseSlug}-${crypto.randomUUID().slice(0,8)}`;
+  const point=mapCoordinatesFromUrl(data.mapsUrl.trim());
+  const latitude=data.latitude.trim()?Number(data.latitude):point?.latitude??null;
+  const longitude=data.longitude.trim()?Number(data.longitude):point?.longitude??null;
+  const listing={slug,clinic_name_en:clinic,clinic_name_ar:data.clinicNameAr.trim(),dentist_name_en:data.dentistNameEn.trim()||null,dentist_name_ar:data.dentistNameAr.trim()||null,area_en:data.areaEn.trim(),area_ar:data.areaAr.trim(),address_en:data.addressEn.trim()||null,address_ar:data.addressAr.trim()||null,description_en:data.descriptionEn.trim()||null,description_ar:data.descriptionAr.trim()||null,phone:data.phone.trim()||null,website_url:data.websiteUrl.trim()||null,maps_url:data.mapsUrl.trim(),latitude,longitude,services_en:services(data.servicesEn),services_ar:services(data.servicesAr),is_sponsored:form.elements.isSponsored.checked,status:data.status,verified_at:data.verifiedAt||null,created_by:signedInUser.id};
+  if((latitude===null)!==(longitude===null)){button.disabled=false;notify(t('Enter both latitude and longitude, or leave both blank.','أدخل خط العرض وخط الطول معًا، أو اتركهما فارغين.'));return}
+  const {error}=await supabase.from('dentists').insert(listing);button.disabled=false;
+  if(error){console.error(error);notify(t('Dentist listing could not be saved. Check that the dentists table and its policies are installed.','تعذّر حفظ العيادة. تحقق من تثبيت جدول أطباء الأسنان وسياساته.'));return}
+  form.reset();document.querySelector('#mapCoordinateNote').textContent=t('Coordinates will be extracted from supported Google Maps links, or you can enter them manually. Short links may not contain coordinates.','ستُستخرج الإحداثيات من روابط خرائط Google المدعومة، ويمكنك إدخالها يدويًا. قد لا تحتوي الروابط المختصرة على إحداثيات.');await renderSaved();notify(t('Dentist listing saved.','تم حفظ بيانات العيادة.'));
+});
+document.querySelector('.saved-card').addEventListener('click',async event=>{const button=event.target.closest('.delete-item');if(!button||!signedInUser)return;const table={faq:'faqs',blog:'blogs',dentist:'dentists'}[button.dataset.type];const {error}=await supabase.from(table).delete().eq('id',button.dataset.id);if(error){console.error(error);notify(t('Entry could not be deleted.','تعذّر حذف المحتوى.'));return}await renderSaved();notify(t('Entry deleted.','تم حذف المحتوى.'))});
 document.querySelector('#refreshList').addEventListener('click',renderSaved);
 const translationFields={faq:{en:['title','tags','prompt','answer'],ar:['titleAr','tagsAr','promptAr','answerAr']},blog:{en:['title','category','desc','body'],ar:['titleAr','categoryAr','descAr','bodyAr']}};
 document.querySelectorAll('.translate-button').forEach(button=>button.addEventListener('click',async()=>{
@@ -85,10 +121,19 @@ document.querySelectorAll('.translate-button').forEach(button=>button.addEventLi
     if(!Array.isArray(data?.translations)||data.translations.length!==indexes.length)throw new Error('Unexpected translation response');
     data.translations.forEach((translated,index)=>{form.elements[targetNames[indexes[index]]].value=translated});
     notify(t('Translation filled in. Please review it before publishing.','اكتملت الترجمة. يُرجى مراجعتها قبل النشر.'));
-  }catch(error){console.error(error);notify(t('Translation failed. Confirm the Edge Function and DeepL secret are set up.','فشلت الترجمة. تحقق من إعداد الدالة السرية لـ DeepL.'))}
+  }catch(error){
+    console.error('FAQ/blog translation failed',error);
+    let detail=error?.message||'';
+    if(error?.context instanceof Response){
+      try{const payload=await error.context.clone().json();if(payload?.error)detail=payload.error}catch{}
+      if(!detail)detail=`HTTP ${error.context.status}`;
+    }
+    const message=detail?`${t('Translation failed:','فشلت الترجمة:')} ${detail}`:t('Translation failed. Check the Supabase Edge Function logs.','فشلت الترجمة. تحقق من سجلات Edge Function في Supabase.');
+    notify(message);
+  }
   finally{button.disabled=false;button.textContent=t('Translate missing fields','ترجمة الحقول الفارغة')}
 }));
-document.querySelector('#adminLanguage').addEventListener('click',()=>{language=language==='ar'?'en':'ar';localStorage.setItem('siteLanguage',language);window.currentLanguage=language;applyLanguage();updateWelcome()});
+document.querySelector('#adminLanguage').addEventListener('click',()=>{language=language==='ar'?'en':'ar';localStorage.setItem('siteLanguage',language);window.currentLanguage=language;applyLanguage();updateWelcome();if(signedInUser)renderList('#savedDentists',savedDentists.map(row=>({...row,title_en:row.clinic_name_en,title_ar:row.clinic_name_ar})),'dentist')});
 document.querySelector('#adminForgotPassword').addEventListener('click',async()=>{loginError.textContent='';const email=document.querySelector('#adminEmail').value.trim();if(!email){loginError.textContent=t('Enter your account email first.','أدخل البريد الإلكتروني لحسابك أولًا.');document.querySelector('#adminEmail').focus();return}const button=document.querySelector('#adminForgotPassword');button.disabled=true;const {error}=await supabase.auth.resetPasswordForEmail(email,{redirectTo:`${window.location.origin}/admin.html`});button.disabled=false;if(error){console.error(error);loginError.textContent=t('Could not send the reset email. Check the Supabase redirect URL settings and try again.','تعذّر إرسال رسالة إعادة التعيين. تحقق من إعدادات روابط إعادة التوجيه في Supabase وحاول مجددًا.');return}loginError.textContent=t('If that account exists, a password reset link is on its way. Check your inbox.','إذا كان الحساب موجودًا، فستصلك رسالة إعادة تعيين. تحقق من بريدك.');});
 loginForm.addEventListener('submit',async event=>{event.preventDefault();loginError.textContent='';const data=formData(loginForm);const submit=loginForm.querySelector('[type="submit"]');submit.disabled=true;const {data:result,error}=await supabase.auth.signInWithPassword({email:data.email.trim(),password:data.password});submit.disabled=false;if(error){loginError.textContent=t('Sign-in failed. Check your email and password.','تعذّر تسجيل الدخول. تحقق من البريد الإلكتروني وكلمة المرور.');return}loginForm.reset();setSignedIn(result.user)});
 resetForm.addEventListener('submit',async event=>{event.preventDefault();resetError.textContent='';const data=formData(resetForm);if(data.password!==data.confirmPassword){resetError.textContent=t('The passwords do not match.','كلمتا المرور غير متطابقتين.');return}const submit=resetForm.querySelector('[type="submit"]');submit.disabled=true;const {error}=await supabase.auth.updateUser({password:data.password});submit.disabled=false;if(error){console.error(error);resetError.textContent=t('Could not update the password. The reset link may have expired; request a new one.','تعذّر تحديث كلمة المرور. ربما انتهت صلاحية الرابط؛ اطلب رابطًا جديدًا.');return}passwordRecoveryActive=false;resetForm.reset();await supabase.auth.signOut();setSignedIn(null);loginError.textContent=t('Password updated. Sign in with your new password.','تم تحديث كلمة المرور. سجّل الدخول بكلمة المرور الجديدة.');});

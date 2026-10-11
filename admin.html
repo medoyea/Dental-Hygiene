@@ -48,7 +48,7 @@
 
     <div class="admin-layout" hidden>
       <section class="editor-card">
-        <div class="editor-tabs" role="tablist"><button class="editor-tab active" type="button" role="tab" aria-selected="true" aria-controls="faqForm" data-panel="faqPanel" data-en="Add FAQ" data-ar="إضافة سؤال شائع">إضافة سؤال شائع</button><button class="editor-tab" type="button" role="tab" aria-selected="false" aria-controls="blogForm" data-panel="blogPanel" data-en="Write a blog" data-ar="كتابة مقال">كتابة مقال</button></div>
+        <div class="editor-tabs" role="tablist"><button class="editor-tab active" type="button" role="tab" aria-selected="true" aria-controls="faqForm" data-panel="faqPanel" data-en="Add FAQ" data-ar="إضافة سؤال شائع">إضافة سؤال شائع</button><button class="editor-tab" type="button" role="tab" aria-selected="false" aria-controls="blogForm" data-panel="blogPanel" data-en="Write a blog" data-ar="كتابة مقال">كتابة مقال</button><button class="editor-tab" type="button" role="tab" aria-selected="false" aria-controls="dentistForm" data-panel="dentistPanel" data-en="Add a dentist" data-ar="إضافة طبيب أسنان">إضافة طبيب أسنان</button></div>
         <form id="faqForm" class="editor-form" data-panel-content="faqPanel">
           <div class="form-heading"><div><h2 data-en="Add a FAQ" data-ar="إضافة سؤال شائع">إضافة سؤال شائع</h2><p data-en="Write the question and one ready-made question-and-answer pair for ZOY." data-ar="اكتب السؤال وأضف سؤالًا جاهزًا وإجابته ليعرضهما زوي.">اكتب السؤال وأضف سؤالًا جاهزًا وإجابته ليعرضهما زوي.</p></div></div>
           <div class="field-grid">
@@ -87,6 +87,41 @@
           <div class="translation-tools"><label><span data-en="Translate missing fields to" data-ar="ترجمة الحقول الفارغة إلى">ترجمة الحقول الفارغة إلى</span><select name="translateTo"><option value="ar">العربية</option><option value="en">English</option></select></label><button class="refresh-button translate-button" type="button" data-en="Translate missing fields" data-ar="ترجمة الحقول الفارغة">ترجمة الحقول الفارغة</button><small data-en="Doctor’s name is kept as entered. Review translations before publishing." data-ar="يُترك اسم الطبيب كما أُدخل. راجع الترجمات قبل النشر.">يُترك اسم الطبيب كما أُدخل. راجع الترجمات قبل النشر.</small></div>
           <button class="submit-button" type="submit" data-en="Publish blog" data-ar="نشر المقال">نشر المقال</button>
         </form>
+
+        <form id="dentistForm" class="editor-form" data-panel-content="dentistPanel" hidden>
+          <div class="form-heading"><div><h2 data-en="Add a dentist listing" data-ar="إضافة عيادة إلى الدليل">إضافة عيادة إلى الدليل</h2><p data-en="Add the clinic details in both languages. A Google Maps link is saved with the listing; coordinates are filled automatically when the link contains them." data-ar="أضف بيانات العيادة باللغتين. يُحفظ رابط خرائط Google مع الإعلان، وتُستخرج الإحداثيات تلقائيًا إذا احتوى الرابط عليها.">أضف بيانات العيادة باللغتين. يُحفظ رابط خرائط Google مع الإعلان، وتُستخرج الإحداثيات تلقائيًا إذا احتوى الرابط عليها.</p></div></div>
+          <div class="subsection-title" data-en="Clinic details" data-ar="بيانات العيادة">بيانات العيادة</div>
+          <div class="field-grid">
+            <label><span data-en="Clinic name · English" data-ar="اسم العيادة · الإنجليزية">اسم العيادة · الإنجليزية</span><input name="clinicNameEn" required maxlength="140" /></label>
+            <label><span data-en="Clinic name · Arabic" data-ar="اسم العيادة · العربية">اسم العيادة · العربية</span><input name="clinicNameAr" required maxlength="140" dir="rtl" /></label>
+            <label><span data-en="Dentist name · English (optional)" data-ar="اسم الطبيب · الإنجليزية (اختياري)">اسم الطبيب · الإنجليزية (اختياري)</span><input name="dentistNameEn" maxlength="120" /></label>
+            <label><span data-en="Dentist name · Arabic (optional)" data-ar="اسم الطبيب · العربية (اختياري)">اسم الطبيب · العربية (اختياري)</span><input name="dentistNameAr" maxlength="120" dir="rtl" /></label>
+            <label><span data-en="Area · English" data-ar="المنطقة · الإنجليزية">المنطقة · الإنجليزية</span><input name="areaEn" required maxlength="120" placeholder="Example: New Cairo" /></label>
+            <label><span data-en="Area · Arabic" data-ar="المنطقة · العربية">المنطقة · العربية</span><input name="areaAr" required maxlength="120" dir="rtl" placeholder="مثال: القاهرة الجديدة" /></label>
+            <label><span data-en="Full address · English (optional)" data-ar="العنوان بالتفصيل · الإنجليزية (اختياري)">العنوان بالتفصيل · الإنجليزية (اختياري)</span><textarea name="addressEn" rows="2" maxlength="300"></textarea></label>
+            <label><span data-en="Full address · Arabic (optional)" data-ar="العنوان بالتفصيل · العربية (اختياري)">العنوان بالتفصيل · العربية (اختياري)</span><textarea name="addressAr" rows="2" maxlength="300" dir="rtl"></textarea></label>
+            <label><span data-en="Description · English (optional)" data-ar="نبذة · الإنجليزية (اختياري)">نبذة · الإنجليزية (اختياري)</span><textarea name="descriptionEn" rows="3" maxlength="700"></textarea></label>
+            <label><span data-en="Description · Arabic (optional)" data-ar="نبذة · العربية (اختياري)">نبذة · العربية (اختياري)</span><textarea name="descriptionAr" rows="3" maxlength="700" dir="rtl"></textarea></label>
+          </div>
+          <div class="subsection-title" data-en="Contact and location" data-ar="التواصل والموقع">التواصل والموقع</div>
+          <div class="field-grid">
+            <label><span data-en="Google Maps link" data-ar="رابط خرائط Google">رابط خرائط Google</span><input name="mapsUrl" type="url" required placeholder="https://maps.google.com/..." /></label>
+            <label><span data-en="Phone (optional)" data-ar="رقم الهاتف (اختياري)">رقم الهاتف (اختياري)</span><input name="phone" type="tel" maxlength="40" /></label>
+            <label><span data-en="Website (optional)" data-ar="الموقع الإلكتروني (اختياري)">الموقع الإلكتروني (اختياري)</span><input name="websiteUrl" type="url" maxlength="300" placeholder="https://..." /></label>
+            <label><span data-en="Latitude (optional)" data-ar="خط العرض (اختياري)">خط العرض (اختياري)</span><input name="latitude" type="number" min="-90" max="90" step="any" /></label>
+            <label><span data-en="Longitude (optional)" data-ar="خط الطول (اختياري)">خط الطول (اختياري)</span><input name="longitude" type="number" min="-180" max="180" step="any" /></label>
+          </div>
+          <p class="map-coordinate-note" id="mapCoordinateNote" data-en="Coordinates will be extracted from supported Google Maps links, or you can enter them manually. Short links may not contain coordinates." data-ar="ستُستخرج الإحداثيات من روابط خرائط Google المدعومة، ويمكنك إدخالها يدويًا. قد لا تحتوي الروابط المختصرة على إحداثيات.">ستُستخرج الإحداثيات من روابط خرائط Google المدعومة، ويمكنك إدخالها يدويًا. قد لا تحتوي الروابط المختصرة على إحداثيات.</p>
+          <div class="subsection-title" data-en="Services and listing options" data-ar="الخدمات وخيارات الإدراج">الخدمات وخيارات الإدراج</div>
+          <div class="field-grid">
+            <label><span data-en="Services · English (comma separated)" data-ar="الخدمات · الإنجليزية (افصل بينها بفواصل)">الخدمات · الإنجليزية (افصل بينها بفواصل)</span><input name="servicesEn" placeholder="Cleaning, fillings, whitening" /></label>
+            <label><span data-en="Services · Arabic (comma separated)" data-ar="الخدمات · العربية (افصل بينها بفواصل)">الخدمات · العربية (افصل بينها بفواصل)</span><input name="servicesAr" dir="rtl" placeholder="تنظيف، حشوات، تبييض" /></label>
+            <label><span data-en="Listing status" data-ar="حالة الإدراج">حالة الإدراج</span><select name="status"><option value="published" data-en="Published" data-ar="منشور">منشور</option><option value="draft" data-en="Draft" data-ar="مسودة">مسودة</option><option value="paused" data-en="Paused" data-ar="متوقف">متوقف</option></select></label>
+            <label><span data-en="Verified on (optional)" data-ar="تاريخ التحقق (اختياري)">تاريخ التحقق (اختياري)</span><input name="verifiedAt" type="date" /></label>
+          </div>
+          <label class="admin-checkbox"><input name="isSponsored" type="checkbox" /><span data-en="Mark this as a sponsored listing" data-ar="تمييز هذا الإدراج كإعلان مدفوع">تمييز هذا الإدراج كإعلان مدفوع</span></label>
+          <button class="submit-button" type="submit" data-en="Save dentist listing" data-ar="حفظ بيانات العيادة">حفظ بيانات العيادة</button>
+        </form>
       </section>
 
       <aside class="saved-card">
@@ -94,6 +129,7 @@
         <p class="saved-description" data-en="Entries added from this browser appear below. Remove an entry with the delete button." data-ar="تظهر الإضافات المحفوظة من هذا المتصفح أدناه. استخدم زر الحذف لإزالة أي عنصر.">تظهر الإضافات المحفوظة من هذا المتصفح أدناه. استخدم زر الحذف لإزالة أي عنصر.</p>
         <div class="saved-section"><h3><span data-en="FAQs" data-ar="الأسئلة الشائعة">الأسئلة الشائعة</span><span id="faqCount" class="count-pill">0</span></h3><div id="savedFaqs" class="saved-list"></div></div>
         <div class="saved-section"><h3><span data-en="Blogs" data-ar="المقالات">المقالات</span><span id="blogCount" class="count-pill">0</span></h3><div id="savedBlogs" class="saved-list"></div></div>
+        <div class="saved-section"><h3><span data-en="Dentists" data-ar="أطباء الأسنان">أطباء الأسنان</span><span id="dentistCount" class="count-pill">0</span></h3><div id="savedDentists" class="saved-list"></div></div>
         <div id="adminNotice" class="admin-notice" role="status" aria-live="polite"></div>
       </aside>
     </div>
