@@ -69,6 +69,25 @@ document.querySelector('#blogForm').addEventListener('submit',async event=>{
 });
 document.querySelector('.saved-card').addEventListener('click',async event=>{const button=event.target.closest('.delete-item');if(!button||!signedInUser)return;const table=button.dataset.type==='faq'?'faqs':'blogs';const {error}=await supabase.from(table).delete().eq('id',button.dataset.id);if(error){console.error(error);notify(t('Entry could not be deleted.','تعذّر حذف المحتوى.'));return}await renderSaved();notify(t('Entry deleted.','تم حذف المحتوى.'))});
 document.querySelector('#refreshList').addEventListener('click',renderSaved);
+const translationFields={faq:{en:['title','tags','prompt','answer'],ar:['titleAr','tagsAr','promptAr','answerAr']},blog:{en:['title','category','desc','body'],ar:['titleAr','categoryAr','descAr','bodyAr']}};
+document.querySelectorAll('.translate-button').forEach(button=>button.addEventListener('click',async()=>{
+  if(!signedInUser)return;
+  const form=button.closest('form');const kind=form.id==='faqForm'?'faq':'blog';const to=form.elements.translateTo.value;const from=to==='ar'?'en':'ar';
+  const sourceNames=translationFields[kind][from],targetNames=translationFields[kind][to];
+  const source=sourceNames.map(name=>form.elements[name].value.trim());
+  if(source.every(value=>!value)){notify(t('Enter content in the source language first.','اكتب المحتوى باللغة المصدر أولًا.'));return}
+  const indexes=source.map((value,index)=>value&& !form.elements[targetNames[index]].value.trim()?index:-1).filter(index=>index>=0);
+  if(!indexes.length){notify(t('There are no empty fields to translate. Clear a target field to replace it.','لا توجد حقول فارغة للترجمة. امسح حقلًا لإعادة ترجمته.'));return}
+  button.disabled=true;button.textContent=t('Translating…','جارٍ الترجمة…');
+  try{
+    const {data,error}=await supabase.functions.invoke('translate-content',{body:{texts:indexes.map(index=>source[index]),target_language:to}});
+    if(error)throw error;
+    if(!Array.isArray(data?.translations)||data.translations.length!==indexes.length)throw new Error('Unexpected translation response');
+    data.translations.forEach((translated,index)=>{form.elements[targetNames[indexes[index]]].value=translated});
+    notify(t('Translation filled in. Please review it before publishing.','اكتملت الترجمة. يُرجى مراجعتها قبل النشر.'));
+  }catch(error){console.error(error);notify(t('Translation failed. Confirm the Edge Function and DeepL secret are set up.','فشلت الترجمة. تحقق من إعداد الدالة السرية لـ DeepL.'))}
+  finally{button.disabled=false;button.textContent=t('Translate missing fields','ترجمة الحقول الفارغة')}
+}));
 document.querySelector('#adminLanguage').addEventListener('click',()=>{language=language==='ar'?'en':'ar';localStorage.setItem('siteLanguage',language);window.currentLanguage=language;applyLanguage();updateWelcome()});
 document.querySelector('#adminForgotPassword').addEventListener('click',async()=>{loginError.textContent='';const email=document.querySelector('#adminEmail').value.trim();if(!email){loginError.textContent=t('Enter your account email first.','أدخل البريد الإلكتروني لحسابك أولًا.');document.querySelector('#adminEmail').focus();return}const button=document.querySelector('#adminForgotPassword');button.disabled=true;const {error}=await supabase.auth.resetPasswordForEmail(email,{redirectTo:`${window.location.origin}/admin.html`});button.disabled=false;if(error){console.error(error);loginError.textContent=t('Could not send the reset email. Check the Supabase redirect URL settings and try again.','تعذّر إرسال رسالة إعادة التعيين. تحقق من إعدادات روابط إعادة التوجيه في Supabase وحاول مجددًا.');return}loginError.textContent=t('If that account exists, a password reset link is on its way. Check your inbox.','إذا كان الحساب موجودًا، فستصلك رسالة إعادة تعيين. تحقق من بريدك.');});
 loginForm.addEventListener('submit',async event=>{event.preventDefault();loginError.textContent='';const data=formData(loginForm);const submit=loginForm.querySelector('[type="submit"]');submit.disabled=true;const {data:result,error}=await supabase.auth.signInWithPassword({email:data.email.trim(),password:data.password});submit.disabled=false;if(error){loginError.textContent=t('Sign-in failed. Check your email and password.','تعذّر تسجيل الدخول. تحقق من البريد الإلكتروني وكلمة المرور.');return}loginForm.reset();setSignedIn(result.user)});
